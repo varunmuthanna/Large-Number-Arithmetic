@@ -1,7 +1,7 @@
 // Starter code for Level 4 driver for lp1
 
 // Change following line to your group number
-package cs6301.g00;
+package cs6301.g60;
 import java.util.Scanner;
 
 public class LP1L4 {

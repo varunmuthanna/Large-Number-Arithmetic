@@ -1,7 +1,7 @@
 // Sample code for Level 2 driver for lp1
 
 // Change following line to your group number
-package cs6301.g00;
+package cs6301.g60;
 
 public class LP1L2 {
     public static void main(String[] args) {
