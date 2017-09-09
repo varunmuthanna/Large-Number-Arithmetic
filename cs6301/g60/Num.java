@@ -5,13 +5,19 @@
 // Changed type of base to long: 1:15 PM, 2017-09-08.
 package cs6301.g60;
 
+import java.util.List;
+
 public class Num  implements Comparable<Num> {
 
     static long defaultBase = 10;  // This can be changed to what you want it to be.
     long base = defaultBase;  // Change as needed
 
+    List<Long> list;
+
+
     /* Start of Level 1 */
     Num(String s) {
+        
     }
 
     Num(long x) {
