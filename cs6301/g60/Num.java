@@ -5,22 +5,49 @@
 // Changed type of base to long: 1:15 PM, 2017-09-08.
 package cs6301.g60;
 
+import java.util.ArrayDeque;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Num  implements Comparable<Num> {
 
     static long defaultBase = 10;  // This can be changed to what you want it to be.
-    long base = defaultBase;  // Change as needed
+    long base = 16;  // Change as needed
 
     List<Long> list;
 
+    int MaxChunkSize = 0;
 
     /* Start of Level 1 */
     Num(String s) {
-        
+        // change the list type here
+        list = new LinkedList<>();
+        MaxChunkSize = determineMaxChunkSize();
+
+        for (int i = s.length() ; i >= 0; i = i - MaxChunkSize) {
+            //this gets the chunk based on max chunk size.
+            Long chunkNumber = Long.parseLong(s.substring((i - MaxChunkSize) >= 0 ? i - MaxChunkSize : 0, i));
+
+            System.out.println(convertFromDecimalToBase(chunkNumber, base));
+
+        }
     }
 
     Num(long x) {
+        list = new LinkedList<>();
+        long quotient = 0, remainder=0;
+
+        while(true){
+            quotient = x / base;
+            remainder = x % base;
+
+            list.add(remainder);
+            if(quotient<base){
+                list.add(quotient);
+                break;
+            }
+            x = quotient;
+        }
     }
 
     static Num add(Num a, Num b) {
@@ -72,6 +99,15 @@ public class Num  implements Comparable<Num> {
     // For example, if base=100, and the number stored corresponds to 10965,
     // then the output is "100: 65 9 1"
     void printList() {
+        ArrayDeque<Long> stack = new ArrayDeque<>();
+        for(Long number :list){
+            stack.addFirst(number);
+        }
+        StringBuilder sb = new StringBuilder();
+        while(!stack.isEmpty()){
+            sb.append(stack.pop()+" ");
+        }
+        System.out.println(base+": "+sb.toString());
     }
 
     // Return number to a string in base 10
@@ -80,4 +116,55 @@ public class Num  implements Comparable<Num> {
     }
 
     public long base() { return base; }
+
+
+    /**
+     * All helper methods
+     */
+    private int getUnprocessedStringLength(String str, int chunksProcessed){
+        return str.length() - chunksProcessed * (MaxChunkSize);
+    }
+    private int determineMaxChunkSize(){
+        return 2;
+    }
+
+    public static List<Long> convertFromDecimalToBase(Long number, long base) {
+        ArrayDeque<Long> stack = new ArrayDeque<>();
+        List<Long> list = new LinkedList<>();
+
+        if(number<base) {
+            return list;
+        }
+        if(number==0){
+            list.add(0L);
+            return list;
+        }
+        //sets up the quotient to the original number and remainder to 0
+        Long quotient = number;
+        Long remainder = 0L;
+
+        /**
+         * while quotient is greater than base
+         * there is a scope to convert to a given base
+         *
+         * On exit: the quotient would the final remainder
+         *          which is < base. So we add that explicitly
+         *          onto the stack
+         */
+        while(quotient>=base){
+            quotient = number/base;
+            remainder = number%base;
+            stack.addFirst(remainder);
+
+            number = quotient;
+        }
+        stack.addFirst(quotient);
+
+        while(!stack.isEmpty()){
+            list.add(stack.pop());
+        }
+
+        return list;
+    }
 }
+
