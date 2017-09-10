@@ -3,8 +3,6 @@
 // Change following line to your group number
 package cs6301.g60;
 
-import java.math.BigInteger;
-
 public class LP1L1 {
     public static void main(String[] args) throws Exception {
         /*Num x = new Num(999);
@@ -18,7 +16,7 @@ public class LP1L1 {
         n.printList();*/
 
 
-        Num x = new Num("9223372036854775807");
+        Num x = new Num("158");
         //System.out.println(Num.convertFromDecimalToBase(123123L,2));
     }
 }

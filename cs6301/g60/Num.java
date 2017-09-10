@@ -27,10 +27,10 @@ public class Num  implements Comparable<Num> {
         for (int i = s.length() ; i >= 0; i = i - MaxChunkSize) {
             //this gets the chunk based on max chunk size.
             Long chunkNumber = Long.parseLong(s.substring((i - MaxChunkSize) >= 0 ? i - MaxChunkSize : 0, i));
-
-            System.out.println(convertFromDecimalToBase(chunkNumber, base));
-
+            System.out.println(chunkNumber+": "+convertFromDecimalToBase(chunkNumber, base));
+            list.addAll(convertFromDecimalToBase(chunkNumber, base));
         }
+        System.out.println(list);
     }
 
     Num(long x) {
@@ -133,10 +133,7 @@ public class Num  implements Comparable<Num> {
         List<Long> list = new LinkedList<>();
 
         if(number<base) {
-            return list;
-        }
-        if(number==0){
-            list.add(0L);
+            list.add(number);
             return list;
         }
         //sets up the quotient to the original number and remainder to 0
