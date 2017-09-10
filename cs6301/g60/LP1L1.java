@@ -16,10 +16,14 @@ public class LP1L1 {
         n.printList();*/
 
 
-        Num x = new Num("158");
+        Num x = new Num("200");
+
         Num y = new Num("258");
         Num z = Num.add(x, y);
+        System.out.println(z);
 
+        Num z1 = Num.subtract(y, x);
+        System.out.println(z1);
         //System.out.println(Num.convertFromDecimalToBase(123123L,2));
     }
 }
