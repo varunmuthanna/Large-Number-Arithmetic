@@ -9,7 +9,7 @@ import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+
 
 public class Num  implements Comparable<Num> {
 
@@ -139,7 +139,48 @@ public class Num  implements Comparable<Num> {
 
     // Return number to a string in base 10
     public String toString() {
-        return null;
+        long base = base();
+        List<Long> list = this.list;
+        int chunk = MaxChunkSize;
+
+        ArrayDeque<Long> stack = new ArrayDeque<>();
+
+        //itr: keeps track on when to add the result to the stack
+        //     if it is equal to the chunk size or the list size
+        int itr = 0;
+        long result = 0;
+        long carry = 0;
+
+        //normal counter on the list
+        // if equals to the list size-time to add the result onto the stack
+        long i = 1l;
+
+        for(Long number : list){
+
+            result = (long) (result + number * Math.pow(base, itr));
+            itr++;
+
+            if(itr==chunk || i==list.size()){
+                //the result contains the final answer in decimal
+                result = result + carry;
+                carry = (int) result / (long)Math.pow(10, MaxChunkSize);
+                result = result % (long) (Math.pow(10, MaxChunkSize));
+
+                stack.addFirst(result);
+
+                //after processing one chunk
+                result = 0;
+                itr = 0;
+            }
+            i++;
+        }
+
+        StringBuilder output = new StringBuilder();
+        while(!stack.isEmpty()){
+            output.append(stack.pop()+" ");
+        }
+
+        return output.toString();
     }
 
     public long base() { return base; }
@@ -155,7 +196,7 @@ public class Num  implements Comparable<Num> {
         return 2;
     }
 
-    public static List<Long> convertFromDecimalToBase(Long number, long base) {
+    public List<Long> convertFromDecimalToBase(Long number, long base) {
 
         List<Long> list = new LinkedList<>();
 
