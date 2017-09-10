@@ -16,7 +16,7 @@ public class LP1L1 {
         n.printList();*/
 
 
-        Num x = new Num("158869786213896");
+        Num x = new Num("1817");
         //System.out.println(Num.convertFromDecimalToBase(123123L,2));
     }
 }

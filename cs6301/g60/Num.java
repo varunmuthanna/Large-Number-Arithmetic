@@ -25,7 +25,7 @@ public class Num  implements Comparable<Num> {
         list = new LinkedList<>();
         MaxChunkSize = determineMaxChunkSize();
 
-        for (int i = s.length() ; i >= 0; i = i - MaxChunkSize) {
+        for (int i = s.length() ; i > 0; i = i - MaxChunkSize) {
             //this gets the chunk based on max chunk size.
             Long chunkNumber = Long.parseLong(s.substring((i - MaxChunkSize) >= 0 ? i - MaxChunkSize : 0, i));
             System.out.println(chunkNumber+": "+convertFromDecimalToBase(chunkNumber, base));
