@@ -214,7 +214,7 @@ public class Num  implements Comparable<Num> {
         return 2;
     }
 
-    public List<Long> convertFromDecimalToBase(Long number, long base) {
+    public static List<Long> convertFromDecimalToBase(Long number, long base) {
 
         List<Long> list = new LinkedList<>();
 
