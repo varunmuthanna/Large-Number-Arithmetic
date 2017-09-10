@@ -131,7 +131,6 @@ public class Num  implements Comparable<Num> {
 
     public static List<Long> convertFromDecimalToBase(Long number, long base) {
 
-        Queue<Long> queue = new LinkedList<>();
         List<Long> list = new LinkedList<>();
 
         if(number<base) {
@@ -153,15 +152,11 @@ public class Num  implements Comparable<Num> {
         while(quotient>=base){
             quotient = number/base;
             remainder = number%base;
-            queue.add(remainder);
+            list.add(remainder);
 
             number = quotient;
         }
-        queue.add(quotient);
-
-        while(!queue.isEmpty()){
-            list.add(queue.remove());
-        }
+        list.add(quotient);
 
         return list;
     }
