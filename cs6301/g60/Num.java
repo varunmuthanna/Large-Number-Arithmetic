@@ -8,6 +8,7 @@ package cs6301.g60;
 import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class Num  implements Comparable<Num> {
 
@@ -129,7 +130,8 @@ public class Num  implements Comparable<Num> {
     }
 
     public static List<Long> convertFromDecimalToBase(Long number, long base) {
-        ArrayDeque<Long> stack = new ArrayDeque<>();
+
+        Queue<Long> queue = new LinkedList<>();
         List<Long> list = new LinkedList<>();
 
         if(number<base) {
@@ -151,14 +153,14 @@ public class Num  implements Comparable<Num> {
         while(quotient>=base){
             quotient = number/base;
             remainder = number%base;
-            stack.addFirst(remainder);
+            queue.add(remainder);
 
             number = quotient;
         }
-        stack.addFirst(quotient);
+        queue.add(quotient);
 
-        while(!stack.isEmpty()){
-            list.add(stack.pop());
+        while(!queue.isEmpty()){
+            list.add(queue.remove());
         }
 
         return list;
