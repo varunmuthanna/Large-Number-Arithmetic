@@ -14,7 +14,8 @@ import java.util.List;
 public class Num  implements Comparable<Num> {
 
     static long defaultBase = 10;  // This can be changed to what you want it to be.
-    long base = 16;  // Change as needed
+    static long base = 16;  // Change as needed
+    private boolean negative = false;
 
     private List<Long> list;
 
@@ -61,20 +62,25 @@ public class Num  implements Comparable<Num> {
     	Iterator<Long> bIter = b.getListIterator();
     	Num out = new Num();
     	List<Long> outList = out.getList();
-    	Long carry = 0L;
-    	while(aIter.hasNext() || bIter.hasNext() || carry > 0){
-    		Long sum = next(aIter) + next(bIter) + carry;
-    		List<Long> sumList = convertFromDecimalToBase(sum, a.base());
-    		outList.add(sumList.get(0));
-    		carry = sumList.size() > 1 ? sumList.get(1) : 0;
-    	}
-    	System.out.println("sum" + outList);
-    	
+    	outList = add(aIter, bIter, outList);
         return out;
     }
 
     static Num subtract(Num a, Num b) {
-        return null;
+    	Iterator<Long> aIter = a.getListIterator();
+    	Iterator<Long> bIter = b.getListIterator();
+    	Num out = new Num();
+    	List<Long> outList = out.getList();
+    	int gt = findGreaterList(a.getList(), b.getList());
+    	if(gt == 1){
+    	    outList = subtract(aIter, bIter, outList);
+    	}else if(gt == 2){
+    		outList = subtract(bIter, aIter, outList);
+    		out.negative = true;
+    	}else{
+    		outList.add(0L);
+    	}
+        return out;
     }
 
     // Implement Karatsuba algorithm for excellence credit
@@ -119,6 +125,18 @@ public class Num  implements Comparable<Num> {
     // Utility functions
     // compare "this" to "other": return +1 if this is greater, 0 if equal, -1 otherwise
     public int compareTo(Num other) {
+    	if(this.negative && !other.negative){
+    		return -1;
+    	}else if(!this.negative && other.negative){
+    		return +1;
+    	}else{
+    		int gt = findGreaterList(this.list, other.list);
+    		if(gt == 1){
+    			return +1;
+    		}else if(gt == 2){
+    			return -1;
+    		}
+    	}
         return 0;
     }
 
@@ -230,6 +248,57 @@ public class Num  implements Comparable<Num> {
     
     private static Long next(Iterator<Long> it){
     	return it.hasNext()? it.next() : 0;
+    }
+    
+    private static List<Long> add(Iterator<Long> aIter, Iterator<Long> bIter, List<Long> outList){
+    	Long carry = 0L;
+    	while(aIter.hasNext() || bIter.hasNext() || carry > 0){
+    		Long sum = next(aIter) + next(bIter) + carry;
+    		List<Long> sumList = convertFromDecimalToBase(sum, Num.base);
+    		outList.add(sumList.get(0));
+    		carry = sumList.size() > 1 ? sumList.get(1) : 0;
+    	}
+    	System.out.println("sum" + outList);
+    	return outList;
+    }
+    
+    private static List<Long> subtract(Iterator<Long> aIter, Iterator<Long> bIter, List<Long> outList){
+    	Long carry = 0L;
+    	while(aIter.hasNext()){
+    		Long a = next(aIter) - carry;
+    		Long b = next(bIter);
+    		if(a < b){
+    			a += Num.base;
+    			carry = 1L;
+    		}else{
+    			carry = 0L;
+    		}
+    		outList.add(a - b);
+    	}
+    	System.out.println("difference" + outList);
+    	return outList;
+    }
+    
+    private static int findGreaterList(List<Long> first, List<Long> second){
+    	int flag = 0;
+    	if(first.size() > second.size()){
+    		return 1;
+    	}else if(first.size() < second.size()){
+    		return 2;
+    	}else{
+    		Iterator<Long> it1 = first.iterator();
+    		Iterator<Long> it2 = second.iterator();
+    		while(it1.hasNext() && it2.hasNext()){
+    			Long firstVal = next(it1);
+    			Long secondVal = next(it2);
+    			if(firstVal > secondVal){
+    				flag = 1;
+    			}else if(firstVal < secondVal){
+    				flag = 2;
+    			}
+    		}
+    		return flag;
+    	}
     }
 }
 
