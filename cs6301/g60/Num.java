@@ -6,6 +6,7 @@
 package cs6301.g60;
 
 import java.util.ArrayDeque;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -15,9 +16,13 @@ public class Num  implements Comparable<Num> {
     static long defaultBase = 10;  // This can be changed to what you want it to be.
     long base = 16;  // Change as needed
 
-    List<Long> list;
+    private List<Long> list;
 
-    int MaxChunkSize = 0;
+	int MaxChunkSize = 0;
+	
+	Num(){
+		list = new LinkedList<>();
+	}
 
     /* Start of Level 1 */
     Num(String s) {
@@ -28,7 +33,7 @@ public class Num  implements Comparable<Num> {
         for (int i = s.length() ; i > 0; i = i - MaxChunkSize) {
             //this gets the chunk based on max chunk size.
             Long chunkNumber = Long.parseLong(s.substring((i - MaxChunkSize) >= 0 ? i - MaxChunkSize : 0, i));
-            System.out.println(chunkNumber+": "+convertFromDecimalToBase(chunkNumber, base));
+            //System.out.println(chunkNumber+": "+convertFromDecimalToBase(chunkNumber, base));
             list.addAll(convertFromDecimalToBase(chunkNumber, base));
         }
         System.out.println(list);
@@ -52,7 +57,20 @@ public class Num  implements Comparable<Num> {
     }
 
     static Num add(Num a, Num b) {
-        return null;
+    	Iterator<Long> aIter = a.getListIterator();
+    	Iterator<Long> bIter = b.getListIterator();
+    	Num out = new Num();
+    	List<Long> outList = out.getList();
+    	Long carry = 0L;
+    	while(aIter.hasNext() || bIter.hasNext() || carry > 0){
+    		Long sum = next(aIter) + next(bIter) + carry;
+    		List<Long> sumList = convertFromDecimalToBase(sum, a.base());
+    		outList.add(sumList.get(0));
+    		carry = sumList.size() > 1 ? sumList.get(1) : 0;
+    	}
+    	System.out.println("sum" + outList);
+    	
+        return out;
     }
 
     static Num subtract(Num a, Num b) {
@@ -87,6 +105,14 @@ public class Num  implements Comparable<Num> {
     static Num squareRoot(Num a) {
         return null;
     }
+    
+    public Iterator<Long> getListIterator() {
+		return list.iterator();
+	}
+    
+    public List<Long> getList() {
+		return list;
+	}
     /* End of Level 2 */
 
 
@@ -159,6 +185,10 @@ public class Num  implements Comparable<Num> {
         list.add(quotient);
 
         return list;
+    }
+    
+    private static Long next(Iterator<Long> it){
+    	return it.hasNext()? it.next() : 0;
     }
 }
 
