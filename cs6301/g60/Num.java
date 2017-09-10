@@ -159,7 +159,7 @@ public class Num  implements Comparable<Num> {
     public String toString() {
         long base = base();
         List<Long> list = this.list;
-        int chunk = MaxChunkSize;
+        int chunk = determineMaxChunkSize();
 
         ArrayDeque<Long> stack = new ArrayDeque<>();
 
@@ -181,11 +181,10 @@ public class Num  implements Comparable<Num> {
             if(itr==chunk || i==list.size()){
                 //the result contains the final answer in decimal
                 result = result + carry;
-                carry = (int) result / (long)Math.pow(10, MaxChunkSize);
-                result = result % (long) (Math.pow(10, MaxChunkSize));
+                carry = (int) result / (long) Math.pow(10, chunk);
+                result = result % (long) (Math.pow(10, chunk));
 
                 stack.addFirst(result);
-
                 //after processing one chunk
                 result = 0;
                 itr = 0;
@@ -195,7 +194,7 @@ public class Num  implements Comparable<Num> {
 
         StringBuilder output = new StringBuilder();
         while(!stack.isEmpty()){
-            output.append(stack.pop()+" ");
+            output.append(stack.pop());
         }
 
         return output.toString();
@@ -247,7 +246,7 @@ public class Num  implements Comparable<Num> {
     }
     
     private static Long next(Iterator<Long> it){
-    	return it.hasNext()? it.next() : 0;
+    	return it.hasNext()? it.next() : 0L;
     }
     
     private static List<Long> add(Iterator<Long> aIter, Iterator<Long> bIter, List<Long> outList){
@@ -256,7 +255,7 @@ public class Num  implements Comparable<Num> {
     		Long sum = next(aIter) + next(bIter) + carry;
     		List<Long> sumList = convertFromDecimalToBase(sum, Num.base);
     		outList.add(sumList.get(0));
-    		carry = sumList.size() > 1 ? sumList.get(1) : 0;
+    		carry = sumList.size() > 1 ? sumList.get(1) : 0L;
     	}
     	System.out.println("sum" + outList);
     	return outList;
