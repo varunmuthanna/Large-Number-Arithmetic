@@ -16,9 +16,9 @@ public class LP1L1 {
         n.printList();*/
 
 
-        Num x = new Num("200");
+        Num x = new Num("24");
 
-        Num y = new Num("258");
+        Num y = new Num("24");
         Num z = Num.add(x, y);
         System.out.println(z);
 

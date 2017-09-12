@@ -58,24 +58,20 @@ public class Num  implements Comparable<Num> {
     }
 
     static Num add(Num a, Num b) {
-    	Iterator<Long> aIter = a.getListIterator();
-    	Iterator<Long> bIter = b.getListIterator();
     	Num out = new Num();
     	List<Long> outList = out.getList();
-    	outList = add(aIter, bIter, outList);
+    	outList = add(a.getList(), b.getList(), outList);
         return out;
     }
 
     static Num subtract(Num a, Num b) {
-    	Iterator<Long> aIter = a.getListIterator();
-    	Iterator<Long> bIter = b.getListIterator();
     	Num out = new Num();
     	List<Long> outList = out.getList();
     	int gt = findGreaterList(a.getList(), b.getList());
     	if(gt == 1){
-    	    outList = subtract(aIter, bIter, outList);
+    	    outList = subtract(a.getList(), b.getList(), outList);
     	}else if(gt == 2){
-    		outList = subtract(bIter, aIter, outList);
+    		outList = subtract(b.getList(), a.getList(), outList);
     		out.negative = true;
     	}else{
     		outList.add(0L);
@@ -85,6 +81,9 @@ public class Num  implements Comparable<Num> {
 
     // Implement Karatsuba algorithm for excellence credit
     static Num product(Num a, Num b) {
+    	Num out = new Num();
+    	List<Long> outList = out.getList();
+    	product(a.getList(), b.getList(), outList);
         return null;
     }
 
@@ -219,6 +218,9 @@ public class Num  implements Comparable<Num> {
 
         if(number<base) {
             list.add(number);
+            if(number == 0L){
+            	list.add(0L);
+            }
             return list;
         }
         //sets up the quotient to the original number and remainder to 0
@@ -249,7 +251,9 @@ public class Num  implements Comparable<Num> {
     	return it.hasNext()? it.next() : 0L;
     }
     
-    private static List<Long> add(Iterator<Long> aIter, Iterator<Long> bIter, List<Long> outList){
+    private static List<Long> add(List<Long> a, List<Long> b, List<Long> outList){
+    	Iterator<Long> aIter = a.iterator();
+    	Iterator<Long> bIter = b.iterator();
     	Long carry = 0L;
     	while(aIter.hasNext() || bIter.hasNext() || carry > 0){
     		Long sum = next(aIter) + next(bIter) + carry;
@@ -261,7 +265,9 @@ public class Num  implements Comparable<Num> {
     	return outList;
     }
     
-    private static List<Long> subtract(Iterator<Long> aIter, Iterator<Long> bIter, List<Long> outList){
+    private static List<Long> subtract(List<Long> aList, List<Long> bList, List<Long> outList){
+    	Iterator<Long> aIter = aList.iterator();
+    	Iterator<Long> bIter = bList.iterator();
     	Long carry = 0L;
     	while(aIter.hasNext()){
     		Long a = next(aIter) - carry;
@@ -276,6 +282,22 @@ public class Num  implements Comparable<Num> {
     	}
     	System.out.println("difference" + outList);
     	return outList;
+    }
+    
+    private static List<Long> product(List<Long> a, List<Long> b, List<Long> out){
+    	int gt = findGreaterList(a,b);
+    	if(gt == 2){
+    		out = multiply(b,a,out);
+    	}else{
+    		out = multiply(a,b,out);
+    	}
+    	return out;
+    }
+    
+    private static List<Long> multiply(List<Long> a, List<Long> b, List<Long> out){
+    	
+    	
+    	return out;
     }
     
     private static int findGreaterList(List<Long> first, List<Long> second){
