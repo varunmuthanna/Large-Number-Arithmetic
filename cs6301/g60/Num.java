@@ -86,12 +86,16 @@ public class Num  implements Comparable<Num> {
     	Num out = new Num();
     	List<Long> outList = out.getList();
     	product(a.getList(), b.getList(), outList);
-        return null;
+    	System.out.println("product" + outList);
+        return out;
     }
 
     // Use divide and conquer
     static Num power(Num a, long n) {
-        return null;
+    	Num out = new Num();
+    	getPower(a.getList(), n,out.getList());
+    	System.out.println("power" + out.list);
+        return out;
     }
     /* End of Level 1 */
 
@@ -292,10 +296,51 @@ public class Num  implements Comparable<Num> {
     	return out;
     }
     
-    private static List<Long> multiply(List<Long> a, List<Long> b, List<Long> out){
+    private static List<Long> getPower(List<Long> a, long n, List<Long> out){
+    	if(n == 1){
+    		out.addAll(a);
+    		return out;
+    	}else if(n == 2){
+    		multiply(a,a,out);
+    		return out;
+    	}
     	
-    	
+    	if(n % 2 == 0){
+    		getPower(getPower(a,n/2,new LinkedList<Long>()), 2L ,out);
+    	}else{
+    		multiply(getPower(a,n/2,new LinkedList<Long>()), a, out);
+    	}
     	return out;
+    }
+    
+    private static List<Long> multiply(List<Long> a, List<Long> b, List<Long> out){
+    	List<Long> addzero = new LinkedList<>();
+    	List<Long> sum = new LinkedList<>();
+    	for(Long bVal: b){
+    		List<Long> prod = new LinkedList<>();
+    		prod.addAll(addzero);
+    	    multiplySingle(a, bVal,prod);
+    	    List<Long>tempSum = new LinkedList<>();
+    	    add(sum,prod,tempSum);
+    	    sum = tempSum;
+    	    addzero.add(0L);
+    	}
+    	out.addAll(sum);
+    	return out;
+    }
+    
+    private static void multiplySingle(List<Long> a, Long b, List<Long> out){
+    	Iterator<Long> aIter = a.iterator();
+    	Long carry = 0L;
+    	while(aIter.hasNext()){
+    		Long prod = (next(aIter) * b) + carry;
+    		List<Long> prodList = convertFromDecimalToBase(prod, Num.base);
+    		out.add(prodList.get(0));
+    		carry = prodList.size() > 1 ? prodList.get(1) : 0L;		
+    	}
+    	if(carry > 0){
+    		out.add(carry);
+    	}
     }
     
     private static int findGreaterList(List<Long> first, List<Long> second){

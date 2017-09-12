@@ -22,8 +22,12 @@ public class LP1L1 {
         Num z = Num.add(x, y);
         System.out.println(z);
 
-        Num z1 = Num.subtract(y, x);
+        Num z1 = Num.product(y, x);
         System.out.println(z1);
+        
+        Num z2 = Num.power(y, 8L);
+        System.out.println(z2);
+        
         //System.out.println(Num.convertFromDecimalToBase(123123L,2));
     }
 }
