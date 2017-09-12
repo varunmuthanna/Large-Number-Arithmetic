@@ -60,7 +60,8 @@ public class Num  implements Comparable<Num> {
     static Num add(Num a, Num b) {
     	Num out = new Num();
     	List<Long> outList = out.getList();
-    	outList = add(a.getList(), b.getList(), outList);
+    	add(a.getList(), b.getList(), outList);
+    	System.out.println("sum" + outList);
         return out;
     }
 
@@ -69,13 +70,14 @@ public class Num  implements Comparable<Num> {
     	List<Long> outList = out.getList();
     	int gt = findGreaterList(a.getList(), b.getList());
     	if(gt == 1){
-    	    outList = subtract(a.getList(), b.getList(), outList);
+    	    subtract(a.getList(), b.getList(), outList);
     	}else if(gt == 2){
-    		outList = subtract(b.getList(), a.getList(), outList);
+    		subtract(b.getList(), a.getList(), outList);
     		out.negative = true;
     	}else{
     		outList.add(0L);
     	}
+    	System.out.println("difference" + outList);
         return out;
     }
 
@@ -251,7 +253,7 @@ public class Num  implements Comparable<Num> {
     	return it.hasNext()? it.next() : 0L;
     }
     
-    private static List<Long> add(List<Long> a, List<Long> b, List<Long> outList){
+    private static void add(List<Long> a, List<Long> b, List<Long> outList){
     	Iterator<Long> aIter = a.iterator();
     	Iterator<Long> bIter = b.iterator();
     	Long carry = 0L;
@@ -261,11 +263,9 @@ public class Num  implements Comparable<Num> {
     		outList.add(sumList.get(0));
     		carry = sumList.size() > 1 ? sumList.get(1) : 0L;
     	}
-    	System.out.println("sum" + outList);
-    	return outList;
     }
     
-    private static List<Long> subtract(List<Long> aList, List<Long> bList, List<Long> outList){
+    private static void subtract(List<Long> aList, List<Long> bList, List<Long> outList){
     	Iterator<Long> aIter = aList.iterator();
     	Iterator<Long> bIter = bList.iterator();
     	Long carry = 0L;
@@ -280,8 +280,6 @@ public class Num  implements Comparable<Num> {
     		}
     		outList.add(a - b);
     	}
-    	System.out.println("difference" + outList);
-    	return outList;
     }
     
     private static List<Long> product(List<Long> a, List<Long> b, List<Long> out){
