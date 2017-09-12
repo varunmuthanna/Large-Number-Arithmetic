@@ -3,6 +3,8 @@
 // Change following line to your group number
 package cs6301.g60;
 
+import java.math.BigInteger;
+
 public class LP1L1 {
     public static void main(String[] args) throws Exception {
         /*Num x = new Num(999);
@@ -20,6 +22,7 @@ public class LP1L1 {
 
         Num y = new Num("24");
         Num z = Num.add(x, y);
+
         System.out.println(z);
 
         Num z1 = Num.product(y, x);
@@ -28,6 +31,12 @@ public class LP1L1 {
         Num z2 = Num.power(y, 8L);
         System.out.println(z2);
         
+        //Num z1 = Num.subtract(x, y);
+        System.out.println(z1);
+
+        BigInteger b = new BigInteger("10000000000000000000000000000000000000");
+        BigInteger b1 = new BigInteger("100000000000000000000000000000");
+        b.divide(b1);
         //System.out.println(Num.convertFromDecimalToBase(123123L,2));
     }
 }

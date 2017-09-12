@@ -19,7 +19,7 @@ public class Num  implements Comparable<Num> {
 
     private List<Long> list;
 
-	int MaxChunkSize = 0;
+	private int MaxChunkSize = 2;
 	
 	Num(){
 		list = new LinkedList<>();
@@ -33,9 +33,19 @@ public class Num  implements Comparable<Num> {
 
         for (int i = s.length() ; i > 0; i = i - MaxChunkSize) {
             //this gets the chunk based on max chunk size.
-            Long chunkNumber = Long.parseLong(s.substring((i - MaxChunkSize) >= 0 ? i - MaxChunkSize : 0, i));
-            //System.out.println(chunkNumber+": "+convertFromDecimalToBase(chunkNumber, base));
-            list.addAll(convertFromDecimalToBase(chunkNumber, base));
+            String number = s.substring((i - MaxChunkSize) >= 0 ? i - MaxChunkSize : 0, i);
+            //gives the number of leading zeros in a number
+            int leadingZeros = getLeadingZeros(number);
+            if(leadingZeros>0){
+                while(leadingZeros!=0){
+                    list.add(0L);
+                    leadingZeros--;
+                }
+            }else {
+                Long chunkNumber = Long.parseLong(number);
+                //System.out.println(chunkNumber+": "+convertFromDecimalToBase(chunkNumber, base));
+                list.addAll(convertFromDecimalToBase(chunkNumber, base));
+            }
         }
         System.out.println(list);
     }
@@ -100,9 +110,17 @@ public class Num  implements Comparable<Num> {
     /* End of Level 1 */
 
     /* Start of Level 2 */
+    //a:dividend b : divisor
     static Num divide(Num a, Num b) {
-        return null;
+
+        Num result = new Num();
+
+
+
+        return result;
     }
+
+
 
     static Num mod(Num a, Num b) {
         return null;
@@ -178,30 +196,58 @@ public class Num  implements Comparable<Num> {
         // if equals to the list size-time to add the result onto the stack
         long i = 1l;
 
+        //to get the number of leading zeros
+        // we use this string
+        StringBuilder numberInAChunk = new StringBuilder();
+
         for(Long number : list){
 
             result = (long) (result + number * Math.pow(base, itr));
+            numberInAChunk.append(number);
             itr++;
 
             if(itr==chunk || i==list.size()){
                 //the result contains the final answer in decimal
-                result = result + carry;
-                carry = (int) result / (long) Math.pow(10, chunk);
-                result = result % (long) (Math.pow(10, chunk));
+                // which is not zero
+                if(result!=0) {
+                    result = result + carry;
+                    carry = (int) result / (long) Math.pow(10, chunk);
+                    result = result % (long) (Math.pow(10, chunk));
 
-                stack.addFirst(result);
+                    stack.addFirst(result);
+                }
+                //if there are any leading zeros
+                if(i!=list.size()) {
+                    int leadingZeros = getLeadingZeros(numberInAChunk.reverse().toString());
+
+                    if (leadingZeros > 0) {
+                        while (leadingZeros != 0) {
+                            stack.addFirst(0L);
+                            leadingZeros--;
+                        }
+                    }
+                }
+
                 //after processing one chunk
                 result = 0;
                 itr = 0;
+                numberInAChunk.setLength(0);
             }
             i++;
         }
 
         StringBuilder output = new StringBuilder();
+        if(stack.isEmpty()){
+            return String.valueOf(0L);
+        }
         while(!stack.isEmpty()){
             output.append(stack.pop());
         }
-
+        //if the result is zero
+        // return only one zero
+        if(getLeadingZeros(output.toString())==output.toString().length()){
+            return String.valueOf(0L);
+        }
         return output.toString();
     }
 
@@ -215,7 +261,7 @@ public class Num  implements Comparable<Num> {
         return str.length() - chunksProcessed * (MaxChunkSize);
     }
     private int determineMaxChunkSize(){
-        return 2;
+        return MaxChunkSize;
     }
 
     public static List<Long> convertFromDecimalToBase(Long number, long base) {
@@ -363,6 +409,25 @@ public class Num  implements Comparable<Num> {
     		}
     		return flag;
     	}
+    }
+
+    private int getLeadingZeros(String number){
+        int count = 0;
+        for(int i=0;i<number.length();i++){
+            if(number.charAt(i)=='0'){
+                count++;
+            }else{
+                break;
+            }
+        }
+        return count;
+    }
+
+    private Num singleDigitDivision(Long denominator, List<Long> numerator){
+        Num result = new Num();
+        
+
+        return result;
     }
 }
 
