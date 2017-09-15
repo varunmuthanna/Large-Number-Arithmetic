@@ -5,66 +5,77 @@
 // Changed type of base to long: 1:15 PM, 2017-09-08.
 package cs6301.g60;
 
-import java.util.ArrayDeque;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
+import java.util.*;
 
 public class Num  implements Comparable<Num> {
 
     static long defaultBase = 10;  // This can be changed to what you want it to be.
-    static long base = 16;  // Change as needed
+    static long base = 3;  // Change as needed
     private boolean negative = false;
 
     private List<Long> list;
 
-	private int MaxChunkSize = 2;
-	
-	Num(){
-		list = new LinkedList<>();
-	}
+    private int MaxChunkSize = 2;
+
+    Num() {
+        list = new LinkedList<>();
+    }
+
+    Num(Num copy) {
+        this.list = copy.list;
+        this.defaultBase = copy.defaultBase;
+        this.negative = copy.negative;
+        this.MaxChunkSize = copy.MaxChunkSize;
+        this.base = copy.base;
+
+    }
 
     /* Start of Level 1 */
+
     Num(String s) {
         // change the list type here
-        list = new LinkedList<>();
-        MaxChunkSize = determineMaxChunkSize();
-
-        for (int i = s.length() ; i > 0; i = i - MaxChunkSize) {
-            //this gets the chunk based on max chunk size.
-            String number = s.substring((i - MaxChunkSize) >= 0 ? i - MaxChunkSize : 0, i);
-            //gives the number of leading zeros in a number
-            int leadingZeros = getLeadingZeros(number);
-            if(leadingZeros>0){
-                while(leadingZeros!=0){
-                    list.add(0L);
-                    leadingZeros--;
-                }
-            }else {
-                Long chunkNumber = Long.parseLong(number);
-                //System.out.println(chunkNumber+": "+convertFromDecimalToBase(chunkNumber, base));
-                list.addAll(convertFromDecimalToBase(chunkNumber, base));
-            }
+        if (s.length() == 0) {
+            throw new NullPointerException("Invalid number");
         }
-        System.out.println(list);
+        list = new LinkedList<>();
+
+        Num base10 = new Num(10L);
+        char[] arr = new StringBuilder(s).toString().toCharArray();
+        Num num = this;
+        for (char current : arr) {
+            Num first = Num.product(num, base10);
+            Num second = new Num(current - '0');
+            num = Num.add(first, second);
+        }
+        System.out.println("_____________________________________"+num.list);
+        // copies the num back to object "this"
+        this.list = num.list;
+        this.defaultBase = num.defaultBase;
+        this.negative = num.negative;
+        this.MaxChunkSize = num.MaxChunkSize;
+        this.base = num.base;
     }
 
     Num(long x) {
         list = new LinkedList<>();
-        long quotient = 0, remainder=0;
+        long quotient = base + 1, remainder = 0;
 
-        while(true){
-            quotient = x / base;
-            remainder = x % base;
+        if (x < base) {
+            list.add(x);
+        } else {
+            while (x >= base) {
+                quotient = x / base;
+                remainder = x % base;
+                list.add(remainder);
 
-            list.add(remainder);
-            if(quotient<base){
-                list.add(quotient);
-                break;
+                x = quotient;
             }
-            x = quotient;
+            if (quotient != 0) {
+                list.add(quotient);
+            }
         }
+        System.out.println(list.size() + "  " + list);
     }
 
     static Num add(Num a, Num b) {
@@ -76,18 +87,18 @@ public class Num  implements Comparable<Num> {
     }
 
     static Num subtract(Num a, Num b) {
-    	Num out = new Num();
-    	List<Long> outList = out.getList();
-    	int gt = findGreaterList(a.getList(), b.getList());
-    	if(gt == 1){
-    	    subtract(a.getList(), b.getList(), outList);
-    	}else if(gt == 2){
-    		subtract(b.getList(), a.getList(), outList);
-    		out.negative = true;
-    	}else{
-    		outList.add(0L);
-    	}
-    	System.out.println("difference" + outList);
+        Num out = new Num();
+        List<Long> outList = out.getList();
+        int gt = findGreaterList(a.getList(), b.getList());
+        if (gt == 1) {
+            subtract(a.getList(), b.getList(), outList);
+        } else if (gt == 2) {
+            subtract(b.getList(), a.getList(), outList);
+            out.negative = true;
+        } else {
+            outList.add(0L);
+        }
+        System.out.println("difference" + outList);
         return out;
     }
 
@@ -102,9 +113,9 @@ public class Num  implements Comparable<Num> {
 
     // Use divide and conquer
     static Num power(Num a, long n) {
-    	Num out = new Num();
-    	getPower(a.getList(), n,out.getList());
-    	System.out.println("power" + out.list);
+        Num out = new Num();
+        getPower(a.getList(), n, out.getList());
+        System.out.println("power" + out.list);
         return out;
     }
     /* End of Level 1 */
@@ -112,18 +123,79 @@ public class Num  implements Comparable<Num> {
     /* Start of Level 2 */
     //a:dividend b : divisor
     static Num divide(Num a, Num b) {
+        //if a<b : chechking the list size
+        if (getMagnitude(a).compareTo(getMagnitude(b)) < 0) {
+            return new Num(0L);
+        }
 
-        Num result = new Num();
+        Num originalNumerator = a, originalDenominator = b;
+        Num quotient = null;
 
+        while (getMagnitude(a).compareTo(originalDenominator) >= 0) {
+            Long num = getLastElement(b.getList());
 
+            List<Long> list = getSubListForNumerator(a.getList(), b.getList());
+            if (quotient == null) {
+                quotient = Num.singleDigitDivision(list, num);
+            } else {
+                if (a.negative)
+                    quotient = Num.subtract(quotient, Num.singleDigitDivision(list, num));
+                else
+                    quotient = Num.add(quotient, Num.singleDigitDivision(list, num));
+            }
 
-        return result;
+            Num intermediateResult = Num.product(quotient, originalDenominator);
+            removeLeadingZerosFromList(intermediateResult);
+            Num remainder = Num.subtract(originalNumerator, intermediateResult);
+            a = removeLeadingZerosFromList(remainder);
+        }
+        if (a.negative) {
+            quotient = Num.subtract(quotient, new Num(1L));
+            a = Num.subtract(a, originalDenominator);
+            a.negative = false;
+        }
+
+        System.out.println("Quotient: -----------------  " + quotient.getList());
+        return quotient;
     }
 
-
-
     static Num mod(Num a, Num b) {
-        return null;
+
+        if (getMagnitude(a).compareTo(getMagnitude(b)) == 0) {
+            return a;
+        }
+
+        Num originalNumerator = new Num(a), originalDenominator = new Num(b);
+        Num quotient = null;
+        while (getMagnitude(a).compareTo(originalDenominator) >= 0) {
+            Long num = getLastElement(b.getList());
+
+            List<Long> list = getSubListForNumerator(a.getList(), b.getList());
+            if (quotient == null) {
+                quotient = Num.singleDigitDivision(list, num);
+            } else {
+                if (a.negative)
+                    quotient = Num.subtract(quotient, Num.singleDigitDivision(list, num));
+                else
+                    quotient = Num.add(quotient, Num.singleDigitDivision(list, num));
+            }
+
+            Num intermediateResult = Num.product(quotient, originalDenominator);
+            removeLeadingZerosFromList(intermediateResult);
+            Num remainder = Num.subtract(originalNumerator, intermediateResult);
+            a = removeLeadingZerosFromList(remainder);
+        }
+
+
+        //if(a.getList().size()>0 &&a.compareTo(new Num(0L))<0 ){
+        if (a.negative) {
+            quotient = Num.subtract(quotient, new Num(1L));
+            a = Num.subtract(a, originalDenominator);
+            a.negative = false;
+        }
+
+        System.out.println("Remainder:--------------------  " + a.getList());
+        return a;
     }
 
     // Use divide and conquer
@@ -134,32 +206,31 @@ public class Num  implements Comparable<Num> {
     static Num squareRoot(Num a) {
         return null;
     }
-    
-    public Iterator<Long> getListIterator() {
-		return list.iterator();
-	}
-    
-    public List<Long> getList() {
-		return list;
-	}
-    /* End of Level 2 */
 
+    public Iterator<Long> getListIterator() {
+        return list.iterator();
+    }
+
+    public List<Long> getList() {
+        return list;
+    }
+    /* End of Level 2 */
 
     // Utility functions
     // compare "this" to "other": return +1 if this is greater, 0 if equal, -1 otherwise
     public int compareTo(Num other) {
-    	if(this.negative && !other.negative){
-    		return -1;
-    	}else if(!this.negative && other.negative){
-    		return +1;
-    	}else{
-    		int gt = findGreaterList(this.list, other.list);
-    		if(gt == 1){
-    			return +1;
-    		}else if(gt == 2){
-    			return -1;
-    		}
-    	}
+        if (this.negative && !other.negative) {
+            return -1;
+        } else if (!this.negative && other.negative) {
+            return +1;
+        } else {
+            int gt = findGreaterList(this.list, other.list);
+            if (gt == 1) {
+                return +1;
+            } else if (gt == 2) {
+                return -1;
+            }
+        }
         return 0;
     }
 
@@ -168,99 +239,50 @@ public class Num  implements Comparable<Num> {
     // then the output is "100: 65 9 1"
     void printList() {
         ArrayDeque<Long> stack = new ArrayDeque<>();
-        for(Long number :list){
+        for (Long number : list) {
             stack.addFirst(number);
         }
         StringBuilder sb = new StringBuilder();
-        while(!stack.isEmpty()){
-            sb.append(stack.pop()+" ");
+        while (!stack.isEmpty()) {
+            sb.append(stack.pop() + " ");
         }
-        System.out.println(base+": "+sb.toString());
+        System.out.println(base + ":  " + list.size() + "  " + sb.toString());
     }
 
     // Return number to a string in base 10
     public String toString() {
-        long base = base();
-        List<Long> list = this.list;
-        int chunk = determineMaxChunkSize();
+        Num base = new Num();
+        base.list = convertFromDecimalToBase(base(),10);
 
-        ArrayDeque<Long> stack = new ArrayDeque<>();
+        StringBuilder result = new StringBuilder();
+        List<Long> list = this.getList();
 
-        //itr: keeps track on when to add the result to the stack
-        //     if it is equal to the chunk size or the list size
-        int itr = 0;
-        long result = 0;
-        long carry = 0;
 
-        //normal counter on the list
-        // if equals to the list size-time to add the result onto the stack
-        long i = 1l;
+        // if the list is of size 0
+        if (list.size() == 0) {
+            return new String("0");
+        }
+        Num resultNum = new Num();
+        ListIterator<Long> it = list.listIterator(list.size());
 
-        //to get the number of leading zeros
-        // we use this string
-        StringBuilder numberInAChunk = new StringBuilder();
-
-        for(Long number : list){
-
-            result = (long) (result + number * Math.pow(base, itr));
-            numberInAChunk.append(number);
-            itr++;
-
-            if(itr==chunk || i==list.size()){
-                //the result contains the final answer in decimal
-                // which is not zero
-                if(result!=0) {
-                    result = result + carry;
-                    carry = (int) result / (long) Math.pow(10, chunk);
-                    result = result % (long) (Math.pow(10, chunk));
-
-                    stack.addFirst(result);
-                }
-                //if there are any leading zeros
-                if(i!=list.size()) {
-                    int leadingZeros = getLeadingZeros(numberInAChunk.reverse().toString());
-
-                    if (leadingZeros > 0) {
-                        while (leadingZeros != 0) {
-                            stack.addFirst(0L);
-                            leadingZeros--;
-                        }
-                    }
-                }
-
-                //after processing one chunk
-                result = 0;
-                itr = 0;
-                numberInAChunk.setLength(0);
-            }
-            i++;
+        while (it.hasPrevious()) {
+            resultNum = Num.add(Num.product(resultNum, base), new Num(it.previous()) );
         }
 
-        StringBuilder output = new StringBuilder();
-        if(stack.isEmpty()){
-            return String.valueOf(0L);
-        }
-        while(!stack.isEmpty()){
-            output.append(stack.pop());
-        }
-        //if the result is zero
-        // return only one zero
-        if(getLeadingZeros(output.toString())==output.toString().length()){
-            return String.valueOf(0L);
-        }
-        return output.toString();
+        System.out.println("result: " + resultNum.getList());
+        return result.toString();
     }
 
-    public long base() { return base; }
+    public static long base() {
+        return base;
+    }
 
 
     /**
      * All helper methods
      */
-    private int getUnprocessedStringLength(String str, int chunksProcessed){
-        return str.length() - chunksProcessed * (MaxChunkSize);
-    }
-    private int determineMaxChunkSize(){
+
+    private int determineMaxChunkSize() {
         return MaxChunkSize;
     }
 
@@ -268,10 +290,10 @@ public class Num  implements Comparable<Num> {
 
         List<Long> list = new LinkedList<>();
 
-        if(number<base) {
+        if (number < base) {
             list.add(number);
-            if(number == 0L){
-            	list.add(0L);
+            if (number == 0L) {
+                list.add(0L);
             }
             return list;
         }
@@ -287,9 +309,9 @@ public class Num  implements Comparable<Num> {
          *          which is < base. So we add that explicitly
          *          onto the stack
          */
-        while(quotient>=base){
-            quotient = number/base;
-            remainder = number%base;
+        while (quotient >= base) {
+            quotient = number / base;
+            remainder = number % base;
             list.add(remainder);
 
             number = quotient;
@@ -298,9 +320,12 @@ public class Num  implements Comparable<Num> {
 
         return list;
     }
-    
+
     private static Long next(Iterator<Long> it){
     	return it.hasNext()? it.next() : 0L;
+    }
+    private static Long nextForNull(Iterator<Long> it){
+        return it.hasNext()? it.next() : null;
     }
     
     private static void add(List<Long> a, List<Long> b, List<Long> outList, long base){
@@ -413,21 +438,113 @@ public class Num  implements Comparable<Num> {
 
     private int getLeadingZeros(String number){
         int count = 0;
-        for(int i=0;i<number.length();i++){
-            if(number.charAt(i)=='0'){
+        for (int i = 0; i < number.length(); i++) {
+            if (number.charAt(i) == '0') {
                 count++;
-            }else{
+            } else {
                 break;
             }
         }
         return count;
     }
 
-    private Num singleDigitDivision(Long denominator, List<Long> numerator){
-        Num result = new Num();
-        
+    public static Num singleDigitDivision(List<Long> numerator, Long denominator) {
+        Collections.reverse(numerator);
 
-        return result;
+        if (denominator == 0L) {
+            throw new NullPointerException("Denominator is zero");
+        }
+        if (numerator.size() == 0 || isZero(numerator)) {
+            return new Num(0L);
+        }
+
+        Num quotient = null;
+        Iterator<Long> it = numerator.iterator();
+        Long num = 0L;
+        Long q = null, r = 0L;
+        Long i = 0l;
+        while (it.hasNext()) {
+
+            StringBuilder newNumber = new StringBuilder();
+
+            Long nextNum = nextForNull(it);
+            newNumber.append(String.valueOf(r)).append(String.valueOf(nextNum));
+            num = Long.parseLong(newNumber.toString());
+
+            if (num >= denominator) {
+                q = Math.floorDiv(num, denominator);
+                r = Math.floorMod(num, denominator);
+                if (quotient == null) {
+                    quotient = new Num(q);
+                } else {
+                    Num nq = new Num(q);
+                    quotient = Num.product(quotient, new Num(base()));
+                    quotient = Num.add(quotient, nq);
+                }
+
+            } else {
+                if (quotient != null) {
+                    quotient = Num.product(quotient, new Num(base()));
+                }
+                r = num;
+            }
+
+        }
+        if (quotient == null) {
+            quotient = new Num(r);
+        }
+        System.out.println("single digit quotient:  " + quotient);
+        Collections.reverse(numerator);
+        return quotient;
     }
+
+    private static List<Long> getSubListForNumerator(List<Long> num, List<Long> den) {
+        return num.subList(den.size() - 1, num.size());
+    }
+
+    private static <T> T getLastElement(List<T> elements) {
+        final Iterator<T> itr = elements.iterator();
+        T lastElement = itr.next();
+
+        while (itr.hasNext()) {
+            lastElement = itr.next();
+        }
+
+        return lastElement;
+    }
+
+    private static Num getMagnitude(Num orgNum) {
+        Num copyNum = new Num(orgNum);
+        copyNum = removeLeadingZerosFromList(copyNum);
+        copyNum.negative = false;
+        return copyNum;
+    }
+
+    public static Num removeLeadingZerosFromList(Num num) {
+        List<Long> list = num.getList();
+        for (int i = list.size() - 1; i > -1; i--) {
+            if (list.get(i) == 0L) {
+                list.remove(i);
+            } else {
+                break;
+            }
+        }
+
+        return num;
+    }
+
+    private static boolean isZero(List<Long> list) {
+        Long sum = 0l;
+        for (Long node : list) {
+            sum = sum + node;
+            if (sum > 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
 }
 
