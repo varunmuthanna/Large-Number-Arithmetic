@@ -60,7 +60,7 @@ public class Num  implements Comparable<Num> {
     static Num add(Num a, Num b) {
     	Num out = new Num();
     	List<Long> outList = out.getList();
-    	add(a.getList(), b.getList(), outList);
+    	add(a.getList(), b.getList(), outList,base);
     	System.out.println("sum" + outList);
         return out;
     }
@@ -85,7 +85,7 @@ public class Num  implements Comparable<Num> {
     static Num product(Num a, Num b) {
     	Num out = new Num();
     	List<Long> outList = out.getList();
-    	product(a.getList(), b.getList(), outList);
+    	product(a.getList(), b.getList(), outList, Num.base);
     	System.out.println("product" + outList);
         return out;
     }
@@ -257,13 +257,13 @@ public class Num  implements Comparable<Num> {
     	return it.hasNext()? it.next() : 0L;
     }
     
-    private static void add(List<Long> a, List<Long> b, List<Long> outList){
+    private static void add(List<Long> a, List<Long> b, List<Long> outList, long base){
     	Iterator<Long> aIter = a.iterator();
     	Iterator<Long> bIter = b.iterator();
     	Long carry = 0L;
     	while(aIter.hasNext() || bIter.hasNext() || carry > 0){
     		Long sum = next(aIter) + next(bIter) + carry;
-    		List<Long> sumList = convertFromDecimalToBase(sum, Num.base);
+    		List<Long> sumList = convertFromDecimalToBase(sum, base);
     		outList.add(sumList.get(0));
     		carry = sumList.size() > 1 ? sumList.get(1) : 0L;
     	}
@@ -286,12 +286,12 @@ public class Num  implements Comparable<Num> {
     	}
     }
     
-    private static List<Long> product(List<Long> a, List<Long> b, List<Long> out){
+    private static List<Long> product(List<Long> a, List<Long> b, List<Long> out, long base){
     	int gt = findGreaterList(a,b);
     	if(gt == 2){
-    		out = multiply(b,a,out);
+    		out = multiply(b, a, out, base);
     	}else{
-    		out = multiply(a,b,out);
+    		out = multiply(a, b, out, base);
     	}
     	return out;
     }
@@ -301,27 +301,27 @@ public class Num  implements Comparable<Num> {
     		out.addAll(a);
     		return out;
     	}else if(n == 2){
-    		multiply(a,a,out);
+    		multiply(a,a,out, Num.base);
     		return out;
     	}
     	
     	if(n % 2 == 0){
     		getPower(getPower(a,n/2,new LinkedList<Long>()), 2L ,out);
     	}else{
-    		multiply(getPower(a,n/2,new LinkedList<Long>()), a, out);
+    		multiply(getPower(a,n/2,new LinkedList<Long>()), a, out, Num.base);
     	}
     	return out;
     }
     
-    private static List<Long> multiply(List<Long> a, List<Long> b, List<Long> out){
+    private static List<Long> multiply(List<Long> a, List<Long> b, List<Long> out, long base){
     	List<Long> addzero = new LinkedList<>();
     	List<Long> sum = new LinkedList<>();
     	for(Long bVal: b){
     		List<Long> prod = new LinkedList<>();
     		prod.addAll(addzero);
-    	    multiplySingle(a, bVal,prod);
+    	    multiplySingle(a, bVal,prod,base);
     	    List<Long>tempSum = new LinkedList<>();
-    	    add(sum,prod,tempSum);
+    	    add(sum,prod,tempSum,base);
     	    sum = tempSum;
     	    addzero.add(0L);
     	}
@@ -329,12 +329,12 @@ public class Num  implements Comparable<Num> {
     	return out;
     }
     
-    private static void multiplySingle(List<Long> a, Long b, List<Long> out){
+    private static void multiplySingle(List<Long> a, Long b, List<Long> out, long base){
     	Iterator<Long> aIter = a.iterator();
     	Long carry = 0L;
     	while(aIter.hasNext()){
     		Long prod = (next(aIter) * b) + carry;
-    		List<Long> prodList = convertFromDecimalToBase(prod, Num.base);
+    		List<Long> prodList = convertFromDecimalToBase(prod, base);
     		out.add(prodList.get(0));
     		carry = prodList.size() > 1 ? prodList.get(1) : 0L;		
     	}
