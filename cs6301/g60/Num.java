@@ -11,12 +11,12 @@ import java.util.*;
 public class Num  implements Comparable<Num> {
 
     static long defaultBase = 10;  // This can be changed to what you want it to be.
-    static long base = 3;  // Change as needed
+    static long base = 256;  // Change as needed
     private boolean negative = false;
 
     private List<Long> list;
 
-    private int MaxChunkSize = 2;
+    private int MaxChunkSize = 4;
 
     Num() {
         list = new LinkedList<>();
@@ -249,27 +249,38 @@ public class Num  implements Comparable<Num> {
         System.out.println(base + ":  " + list.size() + "  " + sb.toString());
     }
 
-    // Return number to a string in base 10
+    // Returns a string in base 10
     public String toString() {
-        Num base = new Num();
-        base.list = convertFromDecimalToBase(base(),10);
+        List<Long> ourBase = convertFromDecimalToBase(base(),defaultBase);
+
 
         StringBuilder result = new StringBuilder();
         List<Long> list = this.getList();
-
+        List<Long> resultList = new LinkedList<>();
 
         // if the list is of size 0
         if (list.size() == 0) {
             return new String("0");
         }
-        Num resultNum = new Num();
+
         ListIterator<Long> it = list.listIterator(list.size());
 
         while (it.hasPrevious()) {
-            resultNum = Num.add(Num.product(resultNum, base), new Num(it.previous()) );
+            List<Long> l1 = new LinkedList<>();
+            Num.multiply(resultList, ourBase, l1, defaultBase);
+            resultList.clear();
+            Num.add(l1, convertFromDecimalToBase(it.previous(), defaultBase), resultList, defaultBase);
+
         }
 
-        System.out.println("result: " + resultNum.getList());
+
+        //take out the leading zeros and traverse from the last
+        removeLeadingZerosFromList(resultList);
+        it = resultList.listIterator(resultList.size());
+
+        while(it.hasPrevious()){
+            result.append(it.previous());
+        }
         return result.toString();
     }
 
@@ -317,18 +328,19 @@ public class Num  implements Comparable<Num> {
             number = quotient;
         }
         list.add(quotient);
-
+        //System.out.println("this is the list: "+ list);
         return list;
     }
 
     private static Long next(Iterator<Long> it){
     	return it.hasNext()? it.next() : 0L;
     }
+
     private static Long nextForNull(Iterator<Long> it){
         return it.hasNext()? it.next() : null;
     }
     
-    private static void add(List<Long> a, List<Long> b, List<Long> outList, long base){
+    public static void add(List<Long> a, List<Long> b, List<Long> outList, long base){
     	Iterator<Long> aIter = a.iterator();
     	Iterator<Long> bIter = b.iterator();
     	Long carry = 0L;
@@ -522,15 +534,29 @@ public class Num  implements Comparable<Num> {
 
     public static Num removeLeadingZerosFromList(Num num) {
         List<Long> list = num.getList();
-        for (int i = list.size() - 1; i > -1; i--) {
-            if (list.get(i) == 0L) {
-                list.remove(i);
-            } else {
+        ListIterator<Long> it = list.listIterator(list.size());
+
+        while(it.hasPrevious()){
+            if(it.previous()==0l){
+                it.remove();
+            }else{
                 break;
             }
         }
 
         return num;
+    }
+
+    public static void removeLeadingZerosFromList(List list) {
+        ListIterator<Long> it = list.listIterator(list.size());
+
+        while(it.hasPrevious()){
+            if(it.previous()==0l){
+                it.remove();
+            }else{
+                break;
+            }
+        }
     }
 
     private static boolean isZero(List<Long> list) {

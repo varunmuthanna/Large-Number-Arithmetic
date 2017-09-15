@@ -3,11 +3,8 @@
 // Change following line to your group number
 package cs6301.g60;
 
-import com.sun.tools.internal.xjc.reader.dtd.bindinfo.BindInfo;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import java.math.BigInteger;
-import java.util.Collections;
 
 public class LP1L1 {
     public static void main(String[] args) throws Exception {
@@ -29,13 +26,24 @@ public class LP1L1 {
 //        x1.printList();
 
         //System.out.println();System.out.println();System.out.println();
-        Num x = new Num("1");
-        Num y = new Num("9869621975691276498126946129486192846912846");
+        //TODO: not getting the correct ans for base 128
+        Num x = new Num("350861387498247691694873195743187987654568987548948765567876567867856784534321232345456787899898789890987679876543");
+        Num y = new Num("98686918639460816498164913684631964134");
 
-        Num.divide(x, y);
+        Num result = Num.product(x, y);
 
-        //System.out.println(x);
+        /*Num r = new Num();
+        Num x = new Num("1280");
+        Num y = new Num("126");
+        Num.add(x.getList(), y.getList(), r.getList(), 10);
 
+        Num.convertFromDecimalToBase(178986L,128);*/
+
+        BigInteger xx = new BigInteger("350861387498247691694873195743187987654568987548948765567876567867856784534321232345456787899898789890987679876543");
+        BigInteger yy = new BigInteger("98686918639460816498164913684631964134");
+
+        System.out.println("Correct output: " + xx.multiply(yy));
+        System.out.println("Final answer i: " + result);
 
         //Num y = new Num("7862031823");*/
 
