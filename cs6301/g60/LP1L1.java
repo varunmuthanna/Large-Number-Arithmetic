@@ -27,10 +27,10 @@ public class LP1L1 {
 
         //System.out.println();System.out.println();System.out.println();
         //TODO: not getting the correct ans for base 128
-        Num x = new Num("350861387498247691694873195743187987654568987548948765567876567867856784534321232345456787899898789890987679876543");
-        Num y = new Num("123");
+       // Num x = new Num("350861387498247691694873195743187987654568987548948765567876567867856784534321232345456787899898789890987679876543");
+        //Num y = new Num("123");
 
-        Num result = Num.divide(x, y);
+       // Num result = Num.divide(x, y);
 
         /*Num r = new Num();
         Num x = new Num("1280");
@@ -39,11 +39,11 @@ public class LP1L1 {
 
         Num.convertFromDecimalToBase(178986L,128);*/
 
-        BigInteger xx = new BigInteger("350861387498247691694873195743187987654568987548948765567876567867856784534321232345456787899898789890987679876543");
-        BigInteger yy = new BigInteger("98686918639460816498164913684631964134");
+        //BigInteger xx = new BigInteger("350861387498247691694873195743187987654568987548948765567876567867856784534321232345456787899898789890987679876543");
+        //BigInteger yy = new BigInteger("98686918639460816498164913684631964134");
 
-        System.out.println("Correct output: " + xx.multiply(yy));
-        System.out.println("Final answer i: " + result);
+        //System.out.println("Correct output: " + xx.multiply(yy));
+        //System.out.println("Final answer i: " + result);
 
         //Num y = new Num("7862031823");*/
 
@@ -79,6 +79,11 @@ public class LP1L1 {
         //Num.singleDigitDivision(x.getList(), y.getList().get(0));
         //System.out.println(b1.divide(b2));
 
+        Num a = new Num("1234567891234546");
+        Num b = new Num("0000000000000000001");
+        
+        //System.out.println("a power b = " + Num.power(a, b));
+        System.out.println("a product b = " + Num.product(a,b));
 
     }
 }
