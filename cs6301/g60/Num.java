@@ -11,7 +11,7 @@ import java.util.*;
 public class Num  implements Comparable<Num> {
 
     static long defaultBase = 10;  // This can be changed to what you want it to be.
-    static long base = 16;  // Change as needed
+    static long base = 10000;  // Change as needed
     private boolean negative = false;
     static boolean karatsuba = true;
 

@@ -80,7 +80,7 @@ public class LP1L1 {
         //System.out.println(b1.divide(b2));
 
         Num a = new Num("1234567891234546");
-        Num b = new Num("0000000000000000001");
+        Num b = new Num("1234");
         
         //System.out.println("a power b = " + Num.power(a, b));
         System.out.println("a product b = " + Num.product(a,b));
