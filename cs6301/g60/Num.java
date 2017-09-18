@@ -5,227 +5,275 @@
 // Changed type of base to long: 1:15 PM, 2017-09-08.
 package cs6301.g60;
 
-import java.util.ArrayDeque;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
+import java.util.*;
 
 public class Num  implements Comparable<Num> {
 
     static long defaultBase = 10;  // This can be changed to what you want it to be.
     static long base = 16;  // Change as needed
     private boolean negative = false;
+    static boolean karatsuba = true;
 
     private List<Long> list;
 
-	int MaxChunkSize = 0;
-	
-	Num(){
-		list = new LinkedList<>();
-	}
+    private int MaxChunkSize = 4;
+
+    Num() {
+        list = new LinkedList<>();
+    }
 
     /* Start of Level 1 */
+
     Num(String s) {
         // change the list type here
-        list = new LinkedList<>();
-        MaxChunkSize = determineMaxChunkSize();
-
-        for (int i = s.length() ; i > 0; i = i - MaxChunkSize) {
-            //this gets the chunk based on max chunk size.
-            Long chunkNumber = Long.parseLong(s.substring((i - MaxChunkSize) >= 0 ? i - MaxChunkSize : 0, i));
-            //System.out.println(chunkNumber+": "+convertFromDecimalToBase(chunkNumber, base));
-            list.addAll(convertFromDecimalToBase(chunkNumber, base));
+        if (s.length() == 0) {
+            throw new NullPointerException("Invalid number");
         }
-        System.out.println(list);
+        list = new LinkedList<>();
+
+        Num base10 = new Num(10L);
+        char[] arr = new StringBuilder(s).toString().toCharArray();
+        Num num = this;
+        for (char current : arr) {
+            if(current=='-'){
+                this.negative = true;
+            }else {
+                Num first = Num.product(num, base10);
+                Num second = new Num(current - '0');
+                num = Num.add(first, second);
+            }
+        }
+        System.out.println(this.negative+"_____________________________________"+num.list);
+        // copies the num back to object "this"
+        this.list = num.list;
+        this.defaultBase = num.defaultBase;
+        this.MaxChunkSize = num.MaxChunkSize;
+        this.base = num.base;
     }
 
     Num(long x) {
         list = new LinkedList<>();
-        long quotient = 0, remainder=0;
+        long quotient = base + 1, remainder = 0;
 
-        while(true){
-            quotient = x / base;
-            remainder = x % base;
+        if (x < base) {
+            list.add(x);
+        } else {
+            while (x >= base) {
+                quotient = x / base;
+                remainder = x % base;
+                list.add(remainder);
 
-            list.add(remainder);
-            if(quotient<base){
-                list.add(quotient);
-                break;
+                x = quotient;
             }
-            x = quotient;
+            if (quotient != 0) {
+                list.add(quotient);
+            }
         }
+        //System.out.println(list.size() + "  " + list);
     }
 
     static Num add(Num a, Num b) {
     	Num out = new Num();
     	List<Long> outList = out.getList();
     	add(a.getList(), b.getList(), outList,base);
-    	System.out.println("sum" + outList);
+    	//System.out.println("sum" + outList);
         return out;
     }
 
     static Num subtract(Num a, Num b) {
-    	Num out = new Num();
-    	List<Long> outList = out.getList();
-    	int gt = findGreaterList(a.getList(), b.getList());
-    	if(gt == 1){
-    	    subtract(a.getList(), b.getList(), outList);
-    	}else if(gt == 2){
-    		subtract(b.getList(), a.getList(), outList);
-    		out.negative = true;
-    	}else{
-    		outList.add(0L);
-    	}
-    	System.out.println("difference" + outList);
+        Num out = new Num();
+        List<Long> outList = out.getList();
+        int gt = findGreaterList(a.getList(), b.getList());
+        if (gt == 1) {
+            subtract(a.getList(), b.getList(), outList);
+        } else if (gt == 2) {
+            subtract(b.getList(), a.getList(), outList);
+            out.negative = true;
+        } else {
+            outList.add(0L);
+        }
+        //System.out.println("difference" + outList);
         return out;
     }
 
     // Implement Karatsuba algorithm for excellence credit
     static Num product(Num a, Num b) {
-    	Num out = new Num();
-    	List<Long> outList = out.getList();
-    	product(a.getList(), b.getList(), outList, Num.base);
-    	System.out.println("product" + outList);
-        return out;
+    	if(a.getList().size() == 0 || b.getList().size() == 0){
+    		return new Num(0L);
+    	}
+    	if(karatsuba){
+    		if(a.compareTo(b) >= 0){
+    		    return karMultiply(a,b);
+    		}else{
+    			return karMultiply(b,a);
+    		}
+    	}else{
+    	    Num out = new Num();
+    	    List<Long> outList = out.getList();
+    	    product(a.getList(), b.getList(), outList, Num.base);
+    	    //System.out.println("product" + outList);
+            return out;
+    	}
     }
 
     // Use divide and conquer
     static Num power(Num a, long n) {
-    	Num out = new Num();
-    	getPower(a.getList(), n,out.getList());
-    	System.out.println("power" + out.list);
+        Num out = new Num();
+        getPower(a.getList(), n, out.getList());
+        //System.out.println("power" + out.list);
         return out;
     }
     /* End of Level 1 */
 
     /* Start of Level 2 */
+    //a:dividend b : divisor
     static Num divide(Num a, Num b) {
-        return null;
+        //if denominator equals 0;
+        if(b.getList().size()==0){
+            throw new NullPointerException("Denominator is zero");
+        }
+        if(a.getList().size()==0){
+            return new Num(0L);
+        }
+        Num result = divideAndMod(a, b);
+        if((!a.negative&& b.negative) || (a.negative&& !b.negative)){
+            result.negative = true;
+        }
+
+       return result;
     }
 
     static Num mod(Num a, Num b) {
-        return null;
+        //if denominator equals 0;
+        if(b.getList().size()==0){
+            throw new NullPointerException("Denominator is zero");
+        }
+        if(a.getList().size()==0){
+            return new Num(0L);
+        }
+        return Num.subtract(Num.product(divideAndMod(a, b), b), a);
     }
 
     // Use divide and conquer
     static Num power(Num a, Num n) {
-        return null;
+    	return getPower(a,n);
     }
 
     static Num squareRoot(Num a) {
-        return null;
+    	return getSquareRoot(a);
     }
-    
-    public Iterator<Long> getListIterator() {
-		return list.iterator();
-	}
-    
-    public List<Long> getList() {
-		return list;
-	}
-    /* End of Level 2 */
 
+    public Iterator<Long> getListIterator() {
+        return list.iterator();
+    }
+
+    public List<Long> getList() {
+        return list;
+    }
+    /* End of Level 2 */
 
     // Utility functions
     // compare "this" to "other": return +1 if this is greater, 0 if equal, -1 otherwise
     public int compareTo(Num other) {
-    	if(this.negative && !other.negative){
-    		return -1;
-    	}else if(!this.negative && other.negative){
-    		return +1;
-    	}else{
-    		int gt = findGreaterList(this.list, other.list);
-    		if(gt == 1){
-    			return +1;
-    		}else if(gt == 2){
-    			return -1;
-    		}
-    	}
+        if (this.negative && !other.negative) {
+            return -1;
+        } else if (!this.negative && other.negative) {
+            return +1;
+        } else {
+            int gt = findGreaterList(this.list, other.list);
+            if (gt == 1) {
+                return +1;
+            } else if (gt == 2) {
+                return -1;
+            }
+        }
+        return 0;
+    }
+    //TODO: take any one off
+    public int compareToNum(Num other) {
+        int gt = findGreaterList(this.list, other.list);
+        if (gt == 1) {
+            return +1;
+        } else if (gt == 2) {
+            return -1;
+        }
+
         return 0;
     }
 
-    // Output using the format "base: elements of list ..."
+        // Output using the format "base: elements of list ..."
     // For example, if base=100, and the number stored corresponds to 10965,
     // then the output is "100: 65 9 1"
     void printList() {
         ArrayDeque<Long> stack = new ArrayDeque<>();
-        for(Long number :list){
+        for (Long number : list) {
             stack.addFirst(number);
         }
         StringBuilder sb = new StringBuilder();
-        while(!stack.isEmpty()){
-            sb.append(stack.pop()+" ");
+        while (!stack.isEmpty()) {
+            sb.append(stack.pop() + " ");
         }
-        System.out.println(base+": "+sb.toString());
+        System.out.println(base + ":  " + sb.toString());
     }
 
-    // Return number to a string in base 10
+    // Returns a string in base 10
     public String toString() {
-        long base = base();
-        List<Long> list = this.list;
-        int chunk = determineMaxChunkSize();
+        List<Long> ourBase = convertFromDecimalToBase(base(),defaultBase);
+        StringBuilder result = new StringBuilder();
+        List<Long> list = this.getList();
+        List<Long> resultList = new LinkedList<>();
 
-        ArrayDeque<Long> stack = new ArrayDeque<>();
-
-        //itr: keeps track on when to add the result to the stack
-        //     if it is equal to the chunk size or the list size
-        int itr = 0;
-        long result = 0;
-        long carry = 0;
-
-        //normal counter on the list
-        // if equals to the list size-time to add the result onto the stack
-        long i = 1l;
-
-        for(Long number : list){
-
-            result = (long) (result + number * Math.pow(base, itr));
-            itr++;
-
-            if(itr==chunk || i==list.size()){
-                //the result contains the final answer in decimal
-                result = result + carry;
-                carry = (int) result / (long) Math.pow(10, chunk);
-                result = result % (long) (Math.pow(10, chunk));
-
-                stack.addFirst(result);
-                //after processing one chunk
-                result = 0;
-                itr = 0;
-            }
-            i++;
+        // if the list is of size 0
+        if (list.size() == 0) {
+            return new String("0");
         }
 
-        StringBuilder output = new StringBuilder();
-        while(!stack.isEmpty()){
-            output.append(stack.pop());
+        ListIterator<Long> it = list.listIterator(list.size());
+
+        while (it.hasPrevious()) {
+            List<Long> l1 = new LinkedList<>();
+            Num.multiply(resultList, ourBase, l1, defaultBase);
+            resultList.clear();
+            Num.add(l1, convertFromDecimalToBase(it.previous(), defaultBase), resultList, defaultBase);
+
         }
 
-        return output.toString();
+
+        //take out the leading zeros and traverse from the last
+        removeLeadingZerosFromList(resultList);
+        it = resultList.listIterator(resultList.size());
+
+        if(this.negative){
+            result.append('-');
+        }
+
+        while(it.hasPrevious()){
+            result.append(it.previous());
+        }
+        if(resultList.size() == 0) {
+            return "0";
+        }
+        return result.toString();
     }
 
-    public long base() { return base; }
+    public static long base() {
+        return base;
+    }
 
 
     /**
      * All helper methods
      */
-    private int getUnprocessedStringLength(String str, int chunksProcessed){
-        return str.length() - chunksProcessed * (MaxChunkSize);
-    }
-    private int determineMaxChunkSize(){
-        return 2;
-    }
 
-    public static List<Long> convertFromDecimalToBase(Long number, long base) {
+    private static List<Long> convertFromDecimalToBase(Long number, long base) {
 
         List<Long> list = new LinkedList<>();
 
-        if(number<base) {
+        if (number < base) {
             list.add(number);
-            if(number == 0L){
-            	list.add(0L);
+            if (number == 0L) {
+                list.add(0L);
             }
             return list;
         }
@@ -241,22 +289,22 @@ public class Num  implements Comparable<Num> {
          *          which is < base. So we add that explicitly
          *          onto the stack
          */
-        while(quotient>=base){
-            quotient = number/base;
-            remainder = number%base;
+        while (quotient >= base) {
+            quotient = number / base;
+            remainder = number % base;
             list.add(remainder);
 
             number = quotient;
         }
         list.add(quotient);
-
+        //System.out.println("this is the list: "+ list);
         return list;
     }
-    
+
     private static Long next(Iterator<Long> it){
     	return it.hasNext()? it.next() : 0L;
     }
-    
+
     private static void add(List<Long> a, List<Long> b, List<Long> outList, long base){
     	Iterator<Long> aIter = a.iterator();
     	Iterator<Long> bIter = b.iterator();
@@ -286,6 +334,35 @@ public class Num  implements Comparable<Num> {
     	}
     }
     
+    private static Num karMultiply(Num a, Num b){
+    	if(b.getList().size() == 1){
+    		return multiplySingle(a,b.getList().get(0), Num.base);
+    	}
+    	int k = b.getList().size()/2;
+    	Num ah = new Num();
+    	ah.getList().addAll(a.getList().subList(k, a.getList().size()));
+    	
+    	Num bh = new Num();
+    	bh.getList().addAll(b.getList().subList(k, b.getList().size()));
+    	
+    	Num al = new Num();
+    	al.getList().addAll(a.getList().subList(0,k));
+    	
+    	Num bl = new Num();
+    	bl.getList().addAll(b.getList().subList(0,k));
+    	
+    	Num msbPart = Num.product(ah,bh);
+    	Num lsbPart = Num.product(al, bl);
+    	Num aSum = Num.add(ah, al);
+    	Num bSum = Num.add(bh, bl);
+    	Num abSumProd = Num.product(aSum, bSum);
+    	
+    	Num middle = shiftBase(Num.subtract(Num.subtract(abSumProd, msbPart),lsbPart),k);
+    	Num first = shiftBase(msbPart,2*k);
+    	
+    	return Num.add(Num.add(first, middle),lsbPart);
+    }
+    
     private static List<Long> product(List<Long> a, List<Long> b, List<Long> out, long base){
     	int gt = findGreaterList(a,b);
     	if(gt == 2){
@@ -297,6 +374,10 @@ public class Num  implements Comparable<Num> {
     }
     
     private static List<Long> getPower(List<Long> a, long n, List<Long> out){
+    	if (n==0){
+    		out.add(1L);
+    		return out;
+    	}
     	if(n == 1){
     		out.addAll(a);
     		return out;
@@ -313,6 +394,53 @@ public class Num  implements Comparable<Num> {
     	return out;
     }
     
+    private static Num getPower(Num a, Num b){
+    	Num out = new Num();
+    	Num zero = new Num(0L);
+    	Num one = new Num(1L);
+    	Num two = new Num(2L);
+    	if(b.compareTo(zero) == 0){
+    		return one;
+    	}
+    	if(b.compareTo(one) == 0){
+    		out.getList().addAll(a.getList());
+    		return out;
+    	}else if (b.compareTo(two) == 0){
+    		multiply(a.getList(), a.getList(),out.getList(), Num.base);
+    		return out;
+    	}
+    	
+    	if(Num.mod(b, two).compareTo(zero) == 0){
+    		return getPower(getPower(a,Num.divide(b, two)), two);
+    	}else{
+    		return Num.product(getPower(a,Num.subtract(b, one)),a);
+    	}  	
+    }
+    
+    private static Num getSquareRoot(Num a){
+    	Num one = new Num(1L);
+    	Num two = new Num(2L);
+    	
+    	Num mid;
+    	Num left = new Num(0L);
+    	Num right = a;
+    	
+    	while(true){
+    		mid = Num.divide(Num.add(left, right), two);
+    		if(a.compareTo(Num.power(mid,2L)) >= 0){
+    			if(a.compareTo(Num.power(Num.add(mid, one), 2L)) < 0){
+    				break;
+    			}else{
+    				left = Num.add(mid, one);
+    			}
+    		}else{
+    			right = mid;
+    		}
+    	}
+    	
+    	return mid;
+    }
+    
     private static List<Long> multiply(List<Long> a, List<Long> b, List<Long> out, long base){
     	List<Long> addzero = new LinkedList<>();
     	List<Long> sum = new LinkedList<>();
@@ -326,6 +454,24 @@ public class Num  implements Comparable<Num> {
     	    addzero.add(0L);
     	}
     	out.addAll(sum);
+    	return out;
+    }
+    
+    private static Num multiplySingle(Num a, long b, long base){
+    	Num out = new Num();
+    	List<Long> outList = out.getList();
+    	Iterator<Long> aIter = a.getList().iterator();
+    	Long carry = 0L;
+    	while(aIter.hasNext()){
+    		Long prod = (next(aIter) * b) + carry;
+    		List<Long> prodList = convertFromDecimalToBase(prod, base);
+    		outList.add(prodList.get(0));
+    		carry = prodList.size() > 1 ? prodList.get(1) : 0L;		
+    	}
+    	if(carry > 0){
+    		outList.add(carry);
+    	}
+    	
     	return out;
     }
     
@@ -364,5 +510,119 @@ public class Num  implements Comparable<Num> {
     		return flag;
     	}
     }
+
+    private static Num singleDigitDivision(List<Long> numerator, Long denominator) {
+        Collections.reverse(numerator);
+
+        if (denominator == 0L) {
+            throw new NullPointerException("Denominator is zero");
+        }
+        if (numerator.size() == 0 || isZero(numerator)) {
+            return new Num(0L);
+        }
+
+        Num quotient = null;
+        Iterator<Long> it = numerator.iterator();
+        Long num = 0L;
+        Long q = null, r = 0L;
+        Long i = 0l;
+        while (it.hasNext()) {
+
+            Long nextNum = next(it);
+            num = r*base()+nextNum;
+
+            //start
+            if (num >= denominator) {
+                q = Math.floorDiv(num, denominator);
+                r = Math.floorMod(num, denominator);
+                if (quotient == null) {
+                    quotient = new Num(q);
+                } else {
+                    Num nq = new Num(q);
+                    quotient = Num.product(quotient, new Num(base()));
+                    quotient = Num.add(quotient, nq);
+                }
+
+            } else {
+                if (quotient != null) {
+                    quotient = Num.product(quotient, new Num(base()));
+                }
+                r = num;
+            }
+
+            //end
+
+        }
+        if (quotient == null) {
+            quotient = new Num(r);
+        }
+        //System.out.println("single digit quotient:  " + quotient);
+        Collections.reverse(numerator);
+        return quotient;
+    }
+
+    private static void removeLeadingZerosFromList(List<Long> list) {
+        ListIterator<Long> it = list.listIterator(list.size());
+
+        while(it.hasPrevious()){
+            if(it.previous()==0l){
+                it.remove();
+            }else{
+                break;
+            }
+        }
+    }
+
+    private static boolean isZero(List<Long> list) {
+        Long sum = 0l;
+        for (Long node : list) {
+            sum = sum + node;
+            if (sum > 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    
+    private static Num shiftBase(Num a, long n){
+    	Num out = new Num();
+    	List<Long> outList = out.getList();
+    	outList.addAll(a.getList());
+    	for(long i = 0; i < n; i++){
+    	  outList.add(0,0L);
+    	}
+    	return out;
+    }
+
+    private static Num divideAndMod(Num a, Num b){
+
+        Num left = new Num(0L);
+        Num right = b;
+        Num num1 = new Num(1L);
+
+        Num middleNum = singleDigitDivision(a.getList(), 2L);
+
+        boolean b1 = Num.product(b,middleNum).compareToNum(a)<=0;
+        boolean b2 = Num.product(b,Num.add(middleNum, num1)).compareToNum(a)>0;
+
+        while(true){
+            if((!b1&&b2)){
+                right = middleNum;
+            } else if (b1&&!b2) {
+                left = Num.add(middleNum, num1);;
+            }else if(b1&& b2){
+                break;
+            }
+            middleNum = singleDigitDivision(Num.add(left,right).getList(), 2L);
+
+            b1 = Num.product(b,middleNum).compareToNum(a)<=0;
+            b2 = Num.product(b,Num.add(middleNum, num1)).compareToNum(a)>0;
+
+            System.out.println("quotient:   "+middleNum.getList());
+        }
+        return middleNum;
+    }
+
 }
 
