@@ -66,7 +66,7 @@ public class Program {
                     String s = evaluateExpression.parseExpression(arr[1]);
                     if(!s.equals("0")){
                         i = mapLineNumberToListIndex.get(Integer.parseInt(arr[3]));
-                    }else if(arr.length> 4 && arr[4]==":"){
+                    }else if(arr.length> 4 && arr[4].equals(":")){
                         i = mapLineNumberToListIndex.get(Integer.parseInt(arr[5]));
                     }
                 }else{

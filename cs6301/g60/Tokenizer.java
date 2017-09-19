@@ -2,7 +2,7 @@ package cs6301.g60;
 import java.util.Scanner;
 
 public class Tokenizer {
-    public enum Token { VAR, NUM, OP, EQ , OPEN, CLOSE, EOL, JMP }
+    public enum Token { VAR, NUM, OP, EQ , OPEN, CLOSE, EOL, JMP, UNK }
 
     public static Token tokenize(String s) throws Exception {
         if(s.matches("\\d+")) {  // one or more digits
@@ -23,7 +23,7 @@ public class Tokenizer {
         }else if(s.equals("?")) {
             return Token.JMP;
         } else {  // Error
-            throw new Exception("Unknown token: " + s);
+            return Token.UNK;
         }
     }
 
