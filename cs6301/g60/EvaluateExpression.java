@@ -15,10 +15,12 @@ public class EvaluateExpression {
 	}
 	
 	
-	public void parseExpression(String input) throws Exception{
+	public String parseExpression(String input) throws Exception{
 		System.out.println(input);
 		StringTokenizer tokens = new StringTokenizer(input);
-		System.out.println("output : " + evaluatePostfix(tokens));
+		String output = evaluatePostfix(tokens);
+		System.out.println("output : " + output);
+		return output;
 	}
 	
 	
@@ -42,14 +44,17 @@ public class EvaluateExpression {
 			} else if(s.equals("=")) {
 			    lhs = false;
 			} else if(s.equals(";")) {
-			    numArray[varIndex] = stack.pop();
-			    return numArray[varIndex].toString();
+				break;
 			} else {  // Error
 			    throw new Exception("Unknown token: " + s);
 			}
 		}
-		numArray[varIndex] = stack.pop();
-	    return numArray[varIndex].toString();
+		if (lhs){
+			return numArray[varIndex].toString();
+		}else {
+			numArray[varIndex] = stack.pop();
+			return numArray[varIndex].toString();
+		}
 	}
 	
 	private static Num evaluate(String op, Stack<Num> stack) throws Exception{

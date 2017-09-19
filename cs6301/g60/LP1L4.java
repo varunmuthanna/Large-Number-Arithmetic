@@ -16,7 +16,7 @@ public class LP1L4 {
 
         in = new Scanner(System.in);
 
-        while(in.hasNext()) {
+        while(in.hasNextLine()) {
             String word = in.nextLine();
             if(word.equals(";")) {
                 Program.processList();
