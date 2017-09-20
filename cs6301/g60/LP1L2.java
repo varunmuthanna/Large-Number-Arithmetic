@@ -20,7 +20,7 @@ public class LP1L2 {
 //    System.out.println("output"+Num.divideAndMod(n, m, true));
 
         Num n = new Num("918264023086108356117294691246712647816724596791826402308610835611254691826402308610835619182640230861083561712945129674596125412412412");
-        Num m = new Num("-647816724596791826402308610835611254691826402308610835619182");
+        Num m = new Num("647816724596791826402308610835611254691826402308610835619182");
         System.out.println("output:  "+Num.divide(n, m));
 
         //Num.singleDigitDivision(new Num("1200").getList(), new Num("2").getList().get(0));
