@@ -8,7 +8,6 @@ public class LP1L3 {
 
     public static void main(String[] args) throws Exception {
 	    Scanner in = new Scanner(System.in);
-	    LP1L3 x = new LP1L3();
 	    EvaluateExpression ee = new EvaluateExpression();
 	
 //	    while(in.hasNext()) {
@@ -22,11 +21,14 @@ public class LP1L3 {
 	    	String line = in.nextLine();
 	    	String[] expr = line.split(";");
 	    	if(expr.length == 0){
-    			return;
+	    		ee.exitEvaluation();
+    			break;
     		}
 	    	for(int i = 0; i < expr.length; i++){
 	        	ee.parseExpression(expr[i]);
 	        }
 	    }
+	    
+	    in.close();
     }
 }

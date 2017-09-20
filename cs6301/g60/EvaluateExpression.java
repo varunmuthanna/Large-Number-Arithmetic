@@ -7,24 +7,22 @@ public class EvaluateExpression {
 	
 	private static Num[] numArray;
 	
+	private int lastIndex = -1;
+	
 	EvaluateExpression(){
 		numArray = new Num[26];
 		for(int i = 0; i < numArray.length; i++){
 			numArray[i] = null;
 		}
 	}
-	
-	
+		
 	public String parseExpression(String input) throws Exception{
-		System.out.println(input);
 		StringTokenizer tokens = new StringTokenizer(input);
 		String output = evaluatePostfix(tokens);
-		System.out.println("output : " + output);
 		return output;
 	}
 	
-	
-	private static String evaluatePostfix(StringTokenizer tokens) throws Exception{
+	private String evaluatePostfix(StringTokenizer tokens) throws Exception{
 		Stack<Num> stack = new Stack<>();
 		boolean lhs = true;
 		int varIndex = -1;
@@ -52,12 +50,17 @@ public class EvaluateExpression {
 		if (lhs){
 			return numArray[varIndex].toString();
 		}else {
+			if(numArray[varIndex] == null){
+				this.lastIndex = varIndex;
+			}
 			numArray[varIndex] = stack.pop();
-			return numArray[varIndex].toString();
+			String out = numArray[varIndex].toString();
+			System.out.println(out);
+			return out;
 		}
 	}
 	
-	private static Num evaluate(String op, Stack<Num> stack) throws Exception{
+	private Num evaluate(String op, Stack<Num> stack) throws Exception{
 		Num operand1 = null;
 		Num operand2 = null;
 		if(op == "|"){
@@ -90,6 +93,10 @@ public class EvaluateExpression {
 		    default:
 		    	throw new Exception("Operator not supported ");
 		}
+	}
+	
+	public void exitEvaluation(){
+		numArray[lastIndex].printList(); 
 	}
 
 }

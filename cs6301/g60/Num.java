@@ -44,7 +44,7 @@ public class Num  implements Comparable<Num> {
                 num = Num.add(first, second);
             }
         }
-        System.out.println(this.negative+"_____________________________________"+num.list);
+
         // copies the num back to object "this"
         this.list = num.list;
         this.defaultBase = num.defaultBase;
@@ -74,54 +74,64 @@ public class Num  implements Comparable<Num> {
     }
 
     static Num add(Num a, Num b) {
-    	Num out = new Num();
-    	List<Long> outList = out.getList();
-    	add(a.getList(), b.getList(), outList,base);
-    	//System.out.println("sum" + outList);
+    	Num out = null;
+        if(a.negative && !b.negative){
+        	out = subtractHelper(b, a);
+        }else if(a.negative && b.negative){
+        	out = addHelper(b, a);
+        	out.negative = true;
+        }else if(!a.negative && b.negative){
+        	out = subtractHelper(a, b);
+        }else{
+        	out = addHelper(a, b);
+        }
         return out;
     }
 
     static Num subtract(Num a, Num b) {
-        Num out = new Num();
-        List<Long> outList = out.getList();
-        int gt = findGreaterList(a.getList(), b.getList());
-        if (gt == 1) {
-            subtract(a.getList(), b.getList(), outList);
-        } else if (gt == 2) {
-            subtract(b.getList(), a.getList(), outList);
-            out.negative = true;
-        } else {
-            outList.add(0L);
+        Num out = null;
+        if(a.negative && !b.negative){
+        	out = addHelper(a, b);
+        	out.negative = true;
+        }else if(a.negative && b.negative){
+        	out = subtractHelper(b, a);
+        }else if(!a.negative && b.negative){
+        	out = addHelper(a, b);
+        }else{
+        	out = subtractHelper(a, b);
         }
-        //System.out.println("difference" + outList);
         return out;
     }
 
     // Implement Karatsuba algorithm for excellence credit
     static Num product(Num a, Num b) {
+    	Num out = null;
     	if(a.getList().size() == 0 || b.getList().size() == 0){
     		return new Num(0L);
     	}
     	if(karatsuba){
-    		if(a.compareTo(b) >= 0){
-    		    return karMultiply(a,b);
+    		if(findGreaterList(a.getList(),b.getList()) >= 0){
+    		    out = karMultiply(a,b);
     		}else{
-    			return karMultiply(b,a);
+    			out = karMultiply(b,a);
     		}
     	}else{
-    	    Num out = new Num();
+    	    out = new Num();
     	    List<Long> outList = out.getList();
-    	    product(a.getList(), b.getList(), outList, Num.base);
+    	    out.getList().addAll(product(a.getList(), b.getList(), Num.base));
     	    //System.out.println("product" + outList);
             return out;
     	}
+    	out.negative = a.negative ^ b.negative;
+    	return out;
     }
 
     // Use divide and conquer
     static Num power(Num a, long n) {
-        Num out = new Num();
-        getPower(a.getList(), n, out.getList());
-        //System.out.println("power" + out.list);
+        Num out = getPower(a, n);
+        if(n % 2 != 0 && a.negative){
+        	out.negative = true;
+        }
         return out;
     }
     /* End of Level 1 */
@@ -157,10 +167,22 @@ public class Num  implements Comparable<Num> {
 
     // Use divide and conquer
     static Num power(Num a, Num n) {
-    	return getPower(a,n);
+    	if(n.negative){
+    		return null;
+    	}
+    	Num two = new Num(2L);
+    	Num zero = new Num(0L);
+    	Num out = getPower(a,n);
+    	if (Num.mod(n, two).compareTo(zero) != 0 && a.negative){
+    		out.negative =true;
+    	}
+    	return out;
     }
 
     static Num squareRoot(Num a) {
+    	if(a.negative){
+    		return null;
+    	}
     	return getSquareRoot(a);
     }
 
@@ -181,25 +203,13 @@ public class Num  implements Comparable<Num> {
         } else if (!this.negative && other.negative) {
             return +1;
         } else {
-            int gt = findGreaterList(this.list, other.list);
-            if (gt == 1) {
-                return +1;
-            } else if (gt == 2) {
-                return -1;
-            }
+            return findGreaterList(this.list, other.list);
+           
         }
-        return 0;
     }
     //TODO: take any one off
     public int compareToNum(Num other) {
-        int gt = findGreaterList(this.list, other.list);
-        if (gt == 1) {
-            return +1;
-        } else if (gt == 2) {
-            return -1;
-        }
-
-        return 0;
+        return findGreaterList(this.list, other.list);
     }
 
         // Output using the format "base: elements of list ..."
@@ -232,10 +242,9 @@ public class Num  implements Comparable<Num> {
         ListIterator<Long> it = list.listIterator(list.size());
 
         while (it.hasPrevious()) {
-            List<Long> l1 = new LinkedList<>();
-            Num.multiply(resultList, ourBase, l1, defaultBase);
+            List<Long> l1 = multiply(resultList, ourBase, defaultBase);
             resultList.clear();
-            Num.add(l1, convertFromDecimalToBase(it.previous(), defaultBase), resultList, defaultBase);
+            Num.add(l1, convertFromDecimalToBase(it.previous(), defaultBase), resultList);
 
         }
 
@@ -304,8 +313,29 @@ public class Num  implements Comparable<Num> {
     private static Long next(Iterator<Long> it){
     	return it.hasNext()? it.next() : 0L;
     }
+    
+    private static Num subtractHelper(Num a, Num b){
+    	Num out;
+    	int comp = findGreaterList(a.getList(), b.getList());
+        if (comp > 0) {
+            out = subtract(a.getList(), b.getList());
+        } else if (comp < 0) {
+            out = subtract(b.getList(), a.getList());
+            out.negative = true;
+        } else {
+            out = new Num(0L);
+        }
+        //System.out.println("difference" + outList);
+        return out;
+    }
+    
+    private static Num addHelper(Num a, Num b){
+    	Num out = new Num();
+    	add(a.getList(), b.getList(),out.getList());
+    	return out;
+    }
 
-    private static void add(List<Long> a, List<Long> b, List<Long> outList, long base){
+    private static void add(List<Long> a, List<Long> b, List<Long> outList){
     	Iterator<Long> aIter = a.iterator();
     	Iterator<Long> bIter = b.iterator();
     	Long carry = 0L;
@@ -317,7 +347,9 @@ public class Num  implements Comparable<Num> {
     	}
     }
     
-    private static void subtract(List<Long> aList, List<Long> bList, List<Long> outList){
+    private static Num subtract(List<Long> aList, List<Long> bList){
+    	Num out = new Num();
+    	List<Long> outList = out.getList();
     	Iterator<Long> aIter = aList.iterator();
     	Iterator<Long> bIter = bList.iterator();
     	Long carry = 0L;
@@ -332,6 +364,7 @@ public class Num  implements Comparable<Num> {
     		}
     		outList.add(a - b);
     	}
+    	return out;
     }
     
     private static Num karMultiply(Num a, Num b){
@@ -363,39 +396,40 @@ public class Num  implements Comparable<Num> {
     	return Num.add(Num.add(first, middle),lsbPart);
     }
     
-    private static List<Long> product(List<Long> a, List<Long> b, List<Long> out, long base){
+    private static List<Long> product(List<Long> a, List<Long> b, long base){
+    	List<Long> out = new LinkedList<>(); 
     	int gt = findGreaterList(a,b);
     	if(gt == 2){
-    		out = multiply(b, a, out, base);
+    		out = multiply(b, a, base);
     	}else{
-    		out = multiply(a, b, out, base);
+    		out = multiply(a, b, base);
     	}
     	return out;
     }
     
-    private static List<Long> getPower(List<Long> a, long n, List<Long> out){
+    private static Num getPower(Num a, long n){
+    	Num out = new Num();
+    	List<Long> outList = out.getList();
     	if (n==0){
-    		out.add(1L);
+    		outList.add(1L);
     		return out;
     	}
     	if(n == 1){
-    		out.addAll(a);
+    		outList.addAll(a.getList());
     		return out;
     	}else if(n == 2){
-    		multiply(a,a,out, Num.base);
-    		return out;
+    		return Num.product(a,a);
     	}
     	
     	if(n % 2 == 0){
-    		getPower(getPower(a,n/2,new LinkedList<Long>()), 2L ,out);
+    		out = getPower(getPower(a,n/2), 2L);
     	}else{
-    		multiply(getPower(a,n/2,new LinkedList<Long>()), a, out, Num.base);
+    		out = Num.product(getPower(a,n/2), a);
     	}
     	return out;
     }
     
-    private static Num getPower(Num a, Num b){
-    	Num out = new Num();
+    private static Num getPower(Num a, Num b){    	
     	Num zero = new Num(0L);
     	Num one = new Num(1L);
     	Num two = new Num(2L);
@@ -403,11 +437,11 @@ public class Num  implements Comparable<Num> {
     		return one;
     	}
     	if(b.compareTo(one) == 0){
+    		Num out = new Num();
     		out.getList().addAll(a.getList());
     		return out;
     	}else if (b.compareTo(two) == 0){
-    		multiply(a.getList(), a.getList(),out.getList(), Num.base);
-    		return out;
+    		return Num.product(a, a);
     	}
     	
     	if(Num.mod(b, two).compareTo(zero) == 0){
@@ -441,15 +475,16 @@ public class Num  implements Comparable<Num> {
     	return mid;
     }
     
-    private static List<Long> multiply(List<Long> a, List<Long> b, List<Long> out, long base){
+    private static List<Long> multiply(List<Long> a, List<Long> b, long base){
+    	List<Long> out = new LinkedList<>();
     	List<Long> addzero = new LinkedList<>();
     	List<Long> sum = new LinkedList<>();
     	for(Long bVal: b){
     		List<Long> prod = new LinkedList<>();
     		prod.addAll(addzero);
-    	    multiplySingle(a, bVal,prod,base);
+    		multiplySingle(a, bVal,prod,base);
     	    List<Long>tempSum = new LinkedList<>();
-    	    add(sum,prod,tempSum,base);
+    	    add(sum,prod,tempSum);
     	    sum = tempSum;
     	    addzero.add(0L);
     	}
@@ -491,24 +526,18 @@ public class Num  implements Comparable<Num> {
     
     private static int findGreaterList(List<Long> first, List<Long> second){
     	int flag = 0;
-    	if(first.size() > second.size()){
-    		return 1;
-    	}else if(first.size() < second.size()){
-    		return 2;
-    	}else{
-    		Iterator<Long> it1 = first.iterator();
-    		Iterator<Long> it2 = second.iterator();
-    		while(it1.hasNext() && it2.hasNext()){
-    			Long firstVal = next(it1);
-    			Long secondVal = next(it2);
-    			if(firstVal > secondVal){
-    				flag = 1;
-    			}else if(firstVal < secondVal){
-    				flag = 2;
-    			}
-    		}
-    		return flag;
-    	}
+		Iterator<Long> it1 = first.iterator();
+		Iterator<Long> it2 = second.iterator();
+		while(it1.hasNext() || it2.hasNext()){
+			Long firstVal = next(it1);
+			Long secondVal = next(it2);
+			if(firstVal > secondVal){
+				flag = 1;
+			}else if(firstVal < secondVal){
+				flag = -1;
+			}
+		}
+		return flag;
     }
 
     private static Num singleDigitDivision(List<Long> numerator, Long denominator) {
@@ -619,7 +648,7 @@ public class Num  implements Comparable<Num> {
             b1 = Num.product(b,middleNum).compareToNum(a)<=0;
             b2 = Num.product(b,Num.add(middleNum, num1)).compareToNum(a)>0;
 
-            System.out.println("quotient:   "+middleNum.getList());
+            //System.out.println("quotient:   "+middleNum.getList());
         }
         return middleNum;
     }

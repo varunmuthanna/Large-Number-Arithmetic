@@ -79,11 +79,11 @@ public class LP1L1 {
         //Num.singleDigitDivision(x.getList(), y.getList().get(0));
         //System.out.println(b1.divide(b2));
 
-        Num a = new Num("1234567891234546");
-        Num b = new Num("1234");
+        Num a = new Num("85849037612648764376549098612765874365348765673543");
+        Num b = new Num("566983648761476308476145");
         
         //System.out.println("a power b = " + Num.power(a, b));
-        System.out.println("a product b = " + Num.product(a,b));
+        System.out.println("a product b = " + Num.mod(a,b));
 
     }
 }
