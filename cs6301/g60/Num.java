@@ -162,7 +162,7 @@ public class Num  implements Comparable<Num> {
         if(a.getList().size()==0){
             return new Num(0L);
         }
-        return Num.subtract(Num.product(divideAndMod(a, b), b), a);
+        return Num.subtract(a, Num.product(divideAndMod(a, b), b));
     }
 
     // Use divide and conquer
@@ -624,7 +624,7 @@ public class Num  implements Comparable<Num> {
     	return out;
     }
 
-    private static Num divideAndMod(Num a, Num b){
+    public static Num divideAndMod(Num a, Num b){
 
         Num left = new Num(0L);
         Num right = b;
