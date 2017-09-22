@@ -30,16 +30,14 @@ public class Program {
                         //call shunting yard and the exp back into the list
                         InfixToPostfix sy = new InfixToPostfix();
                         String[] part = line.split("= ");
-                        list.set(i, part[0]+"= "+sy.convertInfixToPostfix(part[1]));
+                        list.set(i, part[0]+" = "+sy.convertInfixToPostfix(part[1]));
                     }
 
                 }
             }
         }
 
-        System.out.println(list);
-
-        //Control structre for thr program
+        //Control structre for the program
         /**
          * Start by reading the list
          * If there is a number check if it's a goto statement
@@ -50,10 +48,13 @@ public class Program {
          *
          * Stop when we read to the end of the list; So a for loop should work here.
          */
+        
         //precondition: all the lines of the program are in postfix form with a line
         //              number preceding every line
+
         for(int i=0;i<list.size();i++){
             String line = list.get(i);
+            
             Tokenizer.Token token = Tokenizer.tokenize(String.valueOf(line.charAt(0)));
             // if it's a l4 statement
             if(token == Tokenizer.Token.NUM){
@@ -62,7 +63,6 @@ public class Program {
                 //System.out.println(arr[2]);
                 if(arr[2].equals("?")){
                     //evaluate the statement here arr[1]
-                    //if(arr[1])
                     String s = evaluateExpression.parseExpression(arr[1]);
                     if(!s.equals("0")){
                         i = mapLineNumberToListIndex.get(Integer.parseInt(arr[3]));
@@ -71,16 +71,22 @@ public class Program {
                     }
                 }else{
                     //strip of the line number and send it to the evaluator
-                    String evaluateLine = line.substring(1, line.length());
-                    evaluateExpression.parseExpression(evaluateLine);
+                    evaluateExpression.parseExpression(removeLineNumber(line));
                 }
             }else{
-                //evaluate line
-                evaluateExpression.parseExpression(line);
+                //evaluate this line as level 3
+                System.out.println(evaluateExpression.parseExpression(line));
             }
         }
 
         evaluateExpression.exitEvaluation();
+    }
+
+    private static String removeLineNumber(String line){
+        String[] lineArr = line.split("=");
+        StringBuilder sb = new StringBuilder();
+        sb.append(lineArr[0].split(" ")[1]).append(" =").append(lineArr[1]);
+        return sb.toString();
     }
 
 }

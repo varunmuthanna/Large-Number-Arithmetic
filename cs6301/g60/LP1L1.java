@@ -26,18 +26,12 @@ public class LP1L1 {
 
         //System.out.println();System.out.println();System.out.println();
 
-        Num a = new Num("-350861387498247691694873195743187987654568987548948765567876567867856784534321232345456787899898789890987679876543");
-        Num b = new Num("-35086138749824769169487319574318798765456898754894876556787656786785678453432123234545678789989878989098767987654");
+        Num a = new Num("100");
+        Num b = new Num("2");
         Num result = Num.divide(a, b);
 
         System.out.println(result);
 
-
-
-        BigInteger x1 = new BigInteger("0");
-        BigInteger y1 = new BigInteger("100");
-
-        System.out.println(x1.mod(y1));
 
         //Constructor testing
 //       Num one = new Num("0");
@@ -81,8 +75,10 @@ public class LP1L1 {
         Num b = new Num("566983648761476308476145");*/
         
         //System.out.println("a power b = " + Num.power(a, b));
-        Num ans =Num.product(a, b);
-        System.out.println("a product b = " + ans);
+
+        /*Num ans =Num.product(a, b);
+
+        System.out.println("a product b = " + ans);*/
         
         
         BigInteger aa = new BigInteger("85849037612648764376549098612765874365348765673543");
