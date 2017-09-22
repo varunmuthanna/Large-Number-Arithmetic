@@ -256,7 +256,7 @@ public class Num  implements Comparable<Num> {
            
         }
     }
-    
+
     public int compareToNum(Num other) {
         return findGreaterList(this.list, other.list);
     }
@@ -265,14 +265,6 @@ public class Num  implements Comparable<Num> {
     // For example, if base=100, and the number stored corresponds to 10965,
     // then the output is "100: 65 9 1"
     void printList() {
-        /*ArrayDeque<Long> stack = new ArrayDeque<>();
-        for (Long number : list) {
-            stack.addFirst(number);
-        }
-        StringBuilder sb = new StringBuilder();
-        while (!stack.isEmpty()) {
-            sb.append(stack.pop() + " ");
-        }*/
         System.out.print(base + ":  ");
         removeLeadingZerosFromList(this.list);
         for(Long num : list){
