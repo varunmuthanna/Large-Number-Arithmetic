@@ -94,7 +94,7 @@ public class EvaluateExpression {
 	private Num evaluate(String op, Stack<Num> stack) throws Exception{
 		Num operand1 = null;
 		Num operand2 = null;
-		if(op == "|"){
+		if(op.equals("|")){
 			if(stack.size() < 1){
 				throw new Exception("Wrong postfix expression ");
 			}

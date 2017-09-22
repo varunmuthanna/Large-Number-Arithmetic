@@ -7,7 +7,9 @@ import java.util.*;
 public class Num  implements Comparable<Num> {
 
     static long defaultBase = 10;  // This can be changed to what you want it to be.
-    static long base = 10;  // Change as needed
+
+    static long base = 16;  // Change as needed
+
     boolean negative = false;
     static boolean karatsuba = true;
 
@@ -323,8 +325,8 @@ public class Num  implements Comparable<Num> {
             List<Long> l1 = multiply(resultList, ourBase, defaultBase);
 
             resultList.clear();
-            //TODO : IMP
-            Num.add(l1, convertFromDecimalToBase(it.previous(), defaultBase), resultList);
+
+            Num.add(l1, convertFromDecimalToBase(it.previous(), defaultBase), resultList,defaultBase);
 
         }
 
@@ -416,21 +418,21 @@ public class Num  implements Comparable<Num> {
     }
 
     private static Num addHelper(Num a, Num b){
-        Num out = new Num();
-        add(a.getList(), b.getList(),out.getList());
-        return out;
+    	Num out = new Num();
+    	add(a.getList(), b.getList(),out.getList(), Num.base);
+    	return out;
     }
 
-    private static void add(List<Long> a, List<Long> b, List<Long> outList){
-        Iterator<Long> aIter = a.iterator();
-        Iterator<Long> bIter = b.iterator();
-        Long carry = 0L;
-        while(aIter.hasNext() || bIter.hasNext() || carry > 0){
-            Long sum = next(aIter) + next(bIter) + carry;
-            List<Long> sumList = convertFromDecimalToBase(sum, base);
-            outList.add(sumList.get(0));
-            carry = sumList.size() > 1 ? sumList.get(1) : 0L;
-        }
+    private static void add(List<Long> a, List<Long> b, List<Long> outList, long base){
+    	Iterator<Long> aIter = a.iterator();
+    	Iterator<Long> bIter = b.iterator();
+    	Long carry = 0L;
+    	while(aIter.hasNext() || bIter.hasNext() || carry > 0){
+    		Long sum = next(aIter) + next(bIter) + carry;
+    		List<Long> sumList = convertFromDecimalToBase(sum, base);
+    		outList.add(sumList.get(0));
+    		carry = sumList.size() > 1 ? sumList.get(1) : 0L;
+    	}
     }
 
     private static Num subtract(List<Long> aList, List<Long> bList){
@@ -562,20 +564,20 @@ public class Num  implements Comparable<Num> {
     }
 
     private static List<Long> multiply(List<Long> a, List<Long> b, long base){
-        List<Long> out = new LinkedList<>();
-        List<Long> addzero = new LinkedList<>();
-        List<Long> sum = new LinkedList<>();
-        for(Long bVal: b){
-            List<Long> prod = new LinkedList<>();
-            prod.addAll(addzero);
-            multiplySingle(a, bVal,prod,base);
-            List<Long>tempSum = new LinkedList<>();
-            add(sum,prod,tempSum);
-            sum = tempSum;
-            addzero.add(0L);
-        }
-        out.addAll(sum);
-        return out;
+    	List<Long> out = new LinkedList<>();
+    	List<Long> addzero = new LinkedList<>();
+    	List<Long> sum = new LinkedList<>();
+    	for(Long bVal: b){
+    		List<Long> prod = new LinkedList<>();
+    		prod.addAll(addzero);
+    		multiplySingle(a, bVal,prod,base);
+    	    List<Long>tempSum = new LinkedList<>();
+    	    add(sum,prod,tempSum,base);
+    	    sum = tempSum;
+    	    addzero.add(0L);
+    	}
+    	out.addAll(sum);
+    	return out;
     }
 
     private static Num multiplySingle(Num a, long b, long base){
