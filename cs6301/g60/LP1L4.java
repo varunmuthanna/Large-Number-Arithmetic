@@ -10,7 +10,6 @@ public class LP1L4 {
 	    Scanner in;
         if (args.length > 0) {
             int base = Integer.parseInt(args[0]);
-            //TODO: confirm if this is correct. Use above base for all numbers (except I/O, which is in base 10)
             Num.base = base;
         }
 
@@ -25,5 +24,7 @@ public class LP1L4 {
             // -1 to take the final semi colon out of the string
             Program.list.add(word.substring(0, word.length() - 1) );
         }
+        
+        in.close();
     }
 }

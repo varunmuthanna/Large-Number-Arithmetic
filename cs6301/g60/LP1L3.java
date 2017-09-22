@@ -6,17 +6,10 @@ import java.util.Scanner;
 
 public class LP1L3 {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 	    Scanner in = new Scanner(System.in);
 	    EvaluateExpression ee = new EvaluateExpression();
-	
-//	    while(in.hasNext()) {
-//	        String word = in.next();
-//	        String[] expr = word.split(";");
-//	        for(int i = 0; i < expr.length; i++){
-//	        	ee.parseExpression(expr[i]);
-//	        }
-//	    }
+
 	    while(in.hasNextLine()){
 	    	String line = in.nextLine();
 	    	String[] expr = line.split(";");
@@ -25,7 +18,12 @@ public class LP1L3 {
     			break;
     		}
 	    	for(int i = 0; i < expr.length; i++){
-	        	ee.parseExpression(expr[i]);
+	    		try{
+	        	    String out = ee.parseExpression(expr[i]);
+	        	    System.out.println(out);
+	    		}catch(Exception e){
+	    			System.out.println("error : " + e);
+	    		}
 	        }
 	    }
 	    

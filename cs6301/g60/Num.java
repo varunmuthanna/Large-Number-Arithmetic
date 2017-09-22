@@ -1,8 +1,4 @@
 
-// Starter code for lp1.
-
-// Change following line to your group number
-// Changed type of base to long: 1:15 PM, 2017-09-08.
 package cs6301.g60;
 
 
@@ -11,7 +7,7 @@ import java.util.*;
 public class Num  implements Comparable<Num> {
 
     static long defaultBase = 10;  // This can be changed to what you want it to be.
-    static long base = 10;  // Change as needed
+    static long base = 10000;  // Change as needed
     boolean negative = false;
     static boolean karatsuba = true;
 
@@ -120,11 +116,11 @@ public class Num  implements Comparable<Num> {
 
     /**
      * Get the product of two numbers of class Num
-     * if Karatsuba flag is enabled then the multiplecation is
+     * if Karatsuba flag is enabled then the multiplication is
      * done using Karatsuba method. Else it is done using normal way 
-     * @param a
-     * @param b
-     * @return
+     * @param a Num class
+     * @param b Num class
+     * @return Num 
      */
     static Num product(Num a, Num b) {
     	Num out = null;
@@ -139,7 +135,6 @@ public class Num  implements Comparable<Num> {
     		}
     	}else{
     	    out = new Num();
-    	    List<Long> outList = out.getList();
     	    out.getList().addAll(product(a.getList(), b.getList(), Num.base));
     	    //System.out.println("product" + outList);
             return out;
@@ -148,7 +143,13 @@ public class Num  implements Comparable<Num> {
     	return out;
     }
 
-    // Use divide and conquer
+    /**
+     * Gets the a to the power of n this is done using
+     * divide and conquer
+     * @param a is a Num class
+     * @param n is long
+     * @return Num class
+     */
     static Num power(Num a, long n) {
         Num out = getPower(a, n);
         if(n % 2 != 0 && a.negative){
@@ -214,7 +215,13 @@ public class Num  implements Comparable<Num> {
 
     }
 
-    // Use divide and conquer
+    /**
+     * Gets the a to the power of n this is done using
+     * divide and conquer
+     * @param a Num class
+     * @param n Num class
+     * @return Num class
+     */
     static Num power(Num a, Num n) {
     	if(n.negative){
     		return null;
@@ -227,7 +234,13 @@ public class Num  implements Comparable<Num> {
     	}
     	return out;
     }
-
+    
+    
+    /**
+     * Finds the square root of the a using binary search
+     * @param a Num class
+     * @return Num class
+     */
     static Num squareRoot(Num a) {
     	if(a.negative){
     		return null;
@@ -235,6 +248,10 @@ public class Num  implements Comparable<Num> {
     	return getSquareRoot(a);
     }
 
+    /**
+     * This a list iterator of the list in the Num class
+     * @return iterator
+     */
     public Iterator<Long> getListIterator() {
         return list.iterator();
     }
@@ -602,7 +619,6 @@ public class Num  implements Comparable<Num> {
         Iterator<Long> it = numerator.iterator();
         Long num = 0L;
         Long q = null, r = 0L;
-        Long i = 0l;
         while (it.hasNext()) {
 
             Long nextNum = next(it);
