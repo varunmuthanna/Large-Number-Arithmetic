@@ -11,7 +11,7 @@ import java.util.*;
 public class Num  implements Comparable<Num> {
 
     static long defaultBase = 10;  // This can be changed to what you want it to be.
-    static long base = 16;  // Change as needed
+    static long base = 10;  // Change as needed
     boolean negative = false;
     static boolean karatsuba = true;
 
@@ -256,7 +256,7 @@ public class Num  implements Comparable<Num> {
            
         }
     }
-    //TODO: take any one off
+    
     public int compareToNum(Num other) {
         return findGreaterList(this.list, other.list);
     }
@@ -265,15 +265,20 @@ public class Num  implements Comparable<Num> {
     // For example, if base=100, and the number stored corresponds to 10965,
     // then the output is "100: 65 9 1"
     void printList() {
-        ArrayDeque<Long> stack = new ArrayDeque<>();
+        /*ArrayDeque<Long> stack = new ArrayDeque<>();
         for (Long number : list) {
             stack.addFirst(number);
         }
         StringBuilder sb = new StringBuilder();
         while (!stack.isEmpty()) {
             sb.append(stack.pop() + " ");
+        }*/
+        System.out.print(base + ":  ");
+        removeLeadingZerosFromList(this.list);
+        for(Long num : list){
+            System.out.print(num+" ");
         }
-        System.out.println(base + ":  " + sb.toString());
+        System.out.println();
     }
 
     // Returns a string in base 10

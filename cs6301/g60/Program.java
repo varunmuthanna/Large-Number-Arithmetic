@@ -12,7 +12,7 @@ public class Program {
     static List<String> list = new ArrayList<>();
     static Map<Integer, Integer> mapLineNumberToListIndex = new HashMap<>();
 
-    static public String processList() throws Exception {
+    static public void processList() throws Exception {
         EvaluateExpression evaluateExpression = new EvaluateExpression();
         for(int i=0;i<list.size();i++){
             String line = list.get(i);
@@ -80,9 +80,7 @@ public class Program {
             }
         }
 
-
-
-        return "";
+        evaluateExpression.exitEvaluation();
     }
 
 }
