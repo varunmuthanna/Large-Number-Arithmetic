@@ -11,13 +11,11 @@ import java.util.*;
 public class Num  implements Comparable<Num> {
 
     static long defaultBase = 10;  // This can be changed to what you want it to be.
-    static long base = 10000;  // Change as needed
-    private boolean negative = false;
+    static long base = 16;  // Change as needed
+    boolean negative = false;
     static boolean karatsuba = true;
 
     private List<Long> list;
-
-    private int MaxChunkSize = 4;
 
     Num() {
         list = new LinkedList<>();
@@ -30,7 +28,7 @@ public class Num  implements Comparable<Num> {
         if (s.length() == 0) {
             throw new NullPointerException("Invalid number");
         }
-        list = new LinkedList<>();
+        list = new ArrayList<>();
 
         Num base10 = new Num(10L);
         char[] arr = new StringBuilder(s).toString().toCharArray();
@@ -47,14 +45,17 @@ public class Num  implements Comparable<Num> {
 
         // copies the num back to object "this"
         this.list = num.list;
-        this.defaultBase = num.defaultBase;
-        this.MaxChunkSize = num.MaxChunkSize;
-        this.base = num.base;
+
     }
 
     Num(long x) {
         list = new LinkedList<>();
         long quotient = base + 1, remainder = 0;
+
+        if(x<0){
+            this.negative = true;
+            x = Math.abs(x);
+        }
 
         if (x < base) {
             list.add(x);
@@ -70,7 +71,6 @@ public class Num  implements Comparable<Num> {
                 list.add(quotient);
             }
         }
-        //System.out.println(list.size() + "  " + list);
     }
 
     static Num add(Num a, Num b) {
@@ -139,30 +139,57 @@ public class Num  implements Comparable<Num> {
     /* Start of Level 2 */
     //a:dividend b : divisor
     static Num divide(Num a, Num b) {
-        //if denominator equals 0;
-        if(b.getList().size()==0){
+
+        //if divisor equals 0
+        if(b.getList().size()==1 && b.getList().get(0)==0L){
             throw new NullPointerException("Denominator is zero");
         }
-        if(a.getList().size()==0){
+        // if dividend equals 0 or dividend < divisor
+        if((a.getList().size()==1 && a.getList().get(0)==0L) || (a.getList().size()<b.getList().size() && a.compareTo(b)<0)){
             return new Num(0L);
         }
-        Num result = divideAndMod(a, b);
-        if((!a.negative&& b.negative) || (a.negative&& !b.negative)){
-            result.negative = true;
+        //if dividend
+        // if dividend equals divisor
+        if(a.getList().size()==b.getList().size() && a.compareTo(b)==0){
+            return new Num(1);
         }
+        //if divisor equals 1
+        if(b.getList().size()==1 && b.getList().get(0)==1L){
+            a.negative = a.negative ^ b.negative;
+            return a;
+        }
+
+
+        Num result = divideAndMod(a, b);
+        result.negative = a.negative ^ b.negative;
 
        return result;
     }
 
     static Num mod(Num a, Num b) {
-        //if denominator equals 0;
-        if(b.getList().size()==0){
+        //if divisor equals 0
+        if(b.getList().size()==1 && b.getList().get(0)==0L){
             throw new NullPointerException("Denominator is zero");
         }
-        if(a.getList().size()==0){
+        // if dividend equals 0
+        if((a.getList().size()==1 && a.getList().get(0)==0L)){
             return new Num(0L);
         }
-        return Num.subtract(a, Num.product(divideAndMod(a, b), b));
+        // if dividend < divisor
+        if((a.getList().size()<b.getList().size() && a.compareTo(b)<0)){
+            return a;
+        }
+        //if dividend
+        // if dividend equals divisor
+        if(a.getList().size()==b.getList().size() && a.compareTo(b)==0){
+            return new Num(0);
+        }
+        //if divisor equals 1
+        if(b.getList().size()==1 && b.getList().get(0)==1L){
+            return new Num(0);
+        }
+        return Num.subtract(a, Num.product(Num.divide(a, b), b));
+
     }
 
     // Use divide and conquer
@@ -229,6 +256,7 @@ public class Num  implements Comparable<Num> {
 
     // Returns a string in base 10
     public String toString() {
+        //keeps our internal base in base 10
         List<Long> ourBase = convertFromDecimalToBase(base(),defaultBase);
         StringBuilder result = new StringBuilder();
         List<Long> list = this.getList();
@@ -243,6 +271,7 @@ public class Num  implements Comparable<Num> {
 
         while (it.hasPrevious()) {
             List<Long> l1 = multiply(resultList, ourBase, defaultBase);
+
             resultList.clear();
             Num.add(l1, convertFromDecimalToBase(it.previous(), defaultBase), resultList);
 

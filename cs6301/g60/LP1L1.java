@@ -20,32 +20,30 @@ public class LP1L1 {
 
 
         //Num x = new Num(new StringBuilder("12412412421").reverse().toString());
-        //TODO:not working
 
 //        Num x1 = new Num(7812603692831612412L);
 //        x1.printList();
 
         //System.out.println();System.out.println();System.out.println();
-        //TODO: not getting the correct ans for base 128
-       // Num x = new Num("350861387498247691694873195743187987654568987548948765567876567867856784534321232345456787899898789890987679876543");
-        //Num y = new Num("123");
 
-       // Num result = Num.divide(x, y);
+        Num a = new Num("-350861387498247691694873195743187987654568987548948765567876567867856784534321232345456787899898789890987679876543");
+        Num b = new Num("-35086138749824769169487319574318798765456898754894876556787656786785678453432123234545678789989878989098767987654");
+        Num result = Num.divide(a, b);
 
-        /*Num r = new Num();
-        Num x = new Num("1280");
-        Num y = new Num("126");
-        Num.add(x.getList(), y.getList(), r.getList(), 10);
+        System.out.println(result);
 
-        Num.convertFromDecimalToBase(178986L,128);*/
 
-        //BigInteger xx = new BigInteger("350861387498247691694873195743187987654568987548948765567876567867856784534321232345456787899898789890987679876543");
-        //BigInteger yy = new BigInteger("98686918639460816498164913684631964134");
 
-        //System.out.println("Correct output: " + xx.multiply(yy));
-        //System.out.println("Final answer i: " + result);
+        BigInteger x1 = new BigInteger("0");
+        BigInteger y1 = new BigInteger("100");
 
-        //Num y = new Num("7862031823");*/
+        System.out.println(x1.mod(y1));
+
+        //Constructor testing
+//       Num one = new Num("0");
+//       System.out.println("is Negetive:  "+ one.negative);
+//       one.printList();
+//       System.out.println("toString output "+one);
 
 
         /*Num x = new Num(8712387612837861823L);
@@ -79,8 +77,8 @@ public class LP1L1 {
         //Num.singleDigitDivision(x.getList(), y.getList().get(0));
         //System.out.println(b1.divide(b2));
 
-        Num a = new Num("85849037612648764376549098612765874365348765673543");
-        Num b = new Num("566983648761476308476145");
+        /*Num a = new Num("85849037612648764376549098612765874365348765673543");
+        Num b = new Num("566983648761476308476145");*/
         
         //System.out.println("a power b = " + Num.power(a, b));
         Num ans =Num.mod(a, b);
