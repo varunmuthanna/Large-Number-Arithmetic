@@ -23,6 +23,7 @@ public class LP1L3 {
 	        	    System.out.println(out);
 	    		}catch(Exception e){
 	    			System.out.println("error : " + e);
+	    			return;
 	    		}
 	        }
 	    }

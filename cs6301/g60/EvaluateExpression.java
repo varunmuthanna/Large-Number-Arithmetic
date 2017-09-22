@@ -33,8 +33,8 @@ public class EvaluateExpression {
 	 * Takes the tokens of postfix and and evaluates. returns the value obtained from evaluation
 	 * if no expression is given and only variable is given, then it prints the value of that variable 
 	 * @param tokens
-	 * @return
-	 * @throws Exception
+	 * @return string that is evaluated
+	 * @throws Exception in case of wrong input
 	 */
 	private String evaluatePostfix(StringTokenizer tokens) throws Exception{
 		Stack<Num> stack = new Stack<>();
@@ -84,6 +84,13 @@ public class EvaluateExpression {
 		return out.toString();
 	}
 	
+	/**
+	 * For each operator performs required operation 
+	 * @param op operator
+	 * @param stack used to get the operands
+	 * @return Num class
+	 * @throws Exception if the operator is not supported
+	 */
 	private Num evaluate(String op, Stack<Num> stack) throws Exception{
 		Num operand1 = null;
 		Num operand2 = null;
@@ -119,6 +126,10 @@ public class EvaluateExpression {
 		}
 	}
 	
+	/**
+	 * When the whole calculation is done this function is used to print list
+	 * of the variable last assigned or printed
+	 */
 	public void exitEvaluation(){
 		numArray[lastIndex].printList(); 
 	}
