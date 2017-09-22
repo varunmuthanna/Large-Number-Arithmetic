@@ -47,12 +47,10 @@ public class EvaluateExpression {
 			    throw new Exception("Unknown token: " + s);
 			}
 		}
+		this.lastIndex = varIndex;
 		if (lhs){
 			return numArray[varIndex].toString();
 		}else {
-			if(numArray[varIndex] == null){
-				this.lastIndex = varIndex;
-			}
 			numArray[varIndex] = stack.pop();
 			String out = numArray[varIndex].toString();
 			System.out.println(out);

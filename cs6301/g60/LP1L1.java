@@ -81,13 +81,13 @@ public class LP1L1 {
         Num b = new Num("566983648761476308476145");*/
         
         //System.out.println("a power b = " + Num.power(a, b));
-        Num ans =Num.mod(a, b);
-        System.out.println("a product b = " + ans);
+        Num ans =Num.product(a, b);
+        System.out.println("a divide b = " + ans);
         
         
         BigInteger aa = new BigInteger("85849037612648764376549098612765874365348765673543");
         BigInteger bb = new BigInteger("566983648761476308476145");
-        System.out.println(aa.mod(bb));
+        //System.out.println(aa.mod(bb));
 
     }
 }

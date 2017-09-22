@@ -72,6 +72,14 @@ public class Num  implements Comparable<Num> {
             }
         }
     }
+    
+    /**
+     * This function adds two Num class, All the cases of the
+     * signs of the numbers are handled
+     * @param a one of the number of Num class to be added
+     * @param b other number of Num class to be added
+     * @return Sum in Num class
+     */
 
     static Num add(Num a, Num b) {
     	Num out = null;
@@ -88,6 +96,13 @@ public class Num  implements Comparable<Num> {
         return out;
     }
 
+    /**
+     * This function subtracts two Numbers of class Num, All the cases of the
+     * signs of the numbers are handled
+     * @param a one of the number of Num class to be subtracted
+     * @param b other number of Num class to be subtracted
+     * @return Difference in Num class
+     */
     static Num subtract(Num a, Num b) {
         Num out = null;
         if(a.negative && !b.negative){
@@ -103,7 +118,14 @@ public class Num  implements Comparable<Num> {
         return out;
     }
 
-    // Implement Karatsuba algorithm for excellence credit
+    /**
+     * Get the product of two numbers of class Num
+     * if Karatsuba flag is enabled then the multiplecation is
+     * done using Karatsuba method. Else it is done using normal way 
+     * @param a
+     * @param b
+     * @return
+     */
     static Num product(Num a, Num b) {
     	Num out = null;
     	if(a.getList().size() == 0 || b.getList().size() == 0){
