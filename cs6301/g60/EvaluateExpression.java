@@ -7,6 +7,7 @@ public class EvaluateExpression {
 	
 	private static Num[] numArray;
 	
+	//stores last assigned or printed variable index to be used for printlist
 	private int lastIndex = -1;
 	
 	EvaluateExpression(){
@@ -15,13 +16,26 @@ public class EvaluateExpression {
 			numArray[i] = null;
 		}
 	}
-		
+	
+	/**
+	 * Takes string as an input converts into tokens and gets postfix evaluated
+	 * @param input string
+	 * @return string
+	 * @throws Exception throws exception in case of illegal postix
+	 */
 	public String parseExpression(String input) throws Exception{
 		StringTokenizer tokens = new StringTokenizer(input);
 		String output = evaluatePostfix(tokens);
 		return output;
 	}
 	
+	/**
+	 * Takes the tokens of postfix and and evaluates. returns the value obtained from evaluation
+	 * if no expression is given and only variable is given, then it prints the value of that variable 
+	 * @param tokens
+	 * @return string that is evaluated
+	 * @throws Exception in case of wrong input
+	 */
 	private String evaluatePostfix(StringTokenizer tokens) throws Exception{
 		Stack<Num> stack = new Stack<>();
 		boolean lhs = true;
@@ -33,6 +47,9 @@ public class EvaluateExpression {
 			} else if(s.matches("[a-z]")) {
 				int index = s.charAt(0) - 'a';
 				if (lhs){
+					if(varIndex != -1){
+						throw new Exception("multiple variables in lhs and its not supported");
+					}
 					varIndex = index;
 				}else{
 				    stack.push(numArray[index]);	
@@ -47,23 +64,37 @@ public class EvaluateExpression {
 			    throw new Exception("Unknown token: " + s);
 			}
 		}
+		this.lastIndex = varIndex;
+		Num out = null;
 		if (lhs){
-			return numArray[varIndex].toString();
+			out = numArray[varIndex];
 		}else {
-			if(numArray[varIndex] == null){
-				this.lastIndex = varIndex;
+			if(stack.size() != 1){
+				throw new Exception("Not a valid postfix expression");
 			}
 			numArray[varIndex] = stack.pop();
-			String out = numArray[varIndex].toString();
-			System.out.println(out);
-			return out;
+			out = numArray[varIndex];
 		}
+		if(stack.size() > 0){
+			throw new Exception("Not a valid postfix expression");
+		}
+		if(out == null){
+			throw new Exception("variable is not defined");
+		}
+		return out.toString();
 	}
 	
+	/**
+	 * For each operator performs required operation 
+	 * @param op operator
+	 * @param stack used to get the operands
+	 * @return Num class
+	 * @throws Exception if the operator is not supported
+	 */
 	private Num evaluate(String op, Stack<Num> stack) throws Exception{
 		Num operand1 = null;
 		Num operand2 = null;
-		if(op == "|"){
+		if(op.equals("|")){
 			if(stack.size() < 1){
 				throw new Exception("Wrong postfix expression ");
 			}
@@ -95,6 +126,10 @@ public class EvaluateExpression {
 		}
 	}
 	
+	/**
+	 * When the whole calculation is done this function is used to print list
+	 * of the variable last assigned or printed
+	 */
 	public void exitEvaluation(){
 		numArray[lastIndex].printList(); 
 	}
