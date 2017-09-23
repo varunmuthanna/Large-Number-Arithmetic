@@ -5,9 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by shivan on 9/18/17.
- */
+
 public class Program {
     static List<String> list = new ArrayList<>();
     static Map<Integer, Integer> mapLineNumberToListIndex = new HashMap<>();
@@ -71,7 +69,7 @@ public class Program {
                     }
                 }else{
                     //strip of the line number and send it to the evaluator
-                	System.out.println(evaluateExpression.parseExpression(removeLineNumber(line)));
+                	evaluateExpression.parseExpression(removeLineNumber(line));
                 }
             }else{
                 //evaluate this line as level 3

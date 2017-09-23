@@ -73,8 +73,8 @@ public class LP1L1 {
 
         Num a = new Num("85849037612648764376549098612765874365348765673543");
         Num b = new Num("566983648761476308476145");
-        
         System.out.println("a squareRoot b = " + Num.squareRoot(a));
+        System.out.println("a squareRoot b = " + Num.power(Num.squareRoot(a),2L) );
 
         /*Num ans =Num.product(a, b);
 
