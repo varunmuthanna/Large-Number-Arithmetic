@@ -71,7 +71,7 @@ public class Program {
                     }
                 }else{
                     //strip of the line number and send it to the evaluator
-                    evaluateExpression.parseExpression(removeLineNumber(line));
+                	System.out.println(evaluateExpression.parseExpression(removeLineNumber(line)));
                 }
             }else{
                 //evaluate this line as level 3

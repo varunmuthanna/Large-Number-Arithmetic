@@ -26,11 +26,11 @@ public class LP1L1 {
 
         //System.out.println();System.out.println();System.out.println();
 
-        Num a = new Num("100");
-        Num b = new Num("2");
-        Num result = Num.divide(a, b);
+        //Num a = new Num("10");
+        //Num b = new Num("5");
+        //Num result = Num.power(a, 5);
 
-        System.out.println(result);
+        //System.out.println("a power 5" + result);
 
 
         //Constructor testing
@@ -71,10 +71,10 @@ public class LP1L1 {
         //Num.singleDigitDivision(x.getList(), y.getList().get(0));
         //System.out.println(b1.divide(b2));
 
-        /*Num a = new Num("85849037612648764376549098612765874365348765673543");
-        Num b = new Num("566983648761476308476145");*/
+        Num a = new Num("85849037612648764376549098612765874365348765673543");
+        Num b = new Num("566983648761476308476145");
         
-        //System.out.println("a power b = " + Num.power(a, b));
+        System.out.println("a squareRoot b = " + Num.squareRoot(a));
 
         /*Num ans =Num.product(a, b);
 

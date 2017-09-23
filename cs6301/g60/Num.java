@@ -512,7 +512,7 @@ public class Num  implements Comparable<Num> {
         if(n % 2 == 0){
             out = getPower(getPower(a,n/2), 2L);
         }else{
-            out = Num.product(getPower(a,n/2), a);
+            out = Num.product(getPower(getPower(a,n/2),2L), a);
         }
         return out;
     }
@@ -735,7 +735,6 @@ public class Num  implements Comparable<Num> {
             b1 = Num.product(b,middleNum).compareToNum(a)<=0;
             b2 = Num.product(b,Num.add(middleNum, num1)).compareToNum(a)>0;
 
-            //System.out.println("quotient:   "+middleNum.getList());
         }
         return middleNum;
     }
